@@ -7,14 +7,14 @@ version = '1.0.0'
 
 
 pluginBundle {
-    website = 'https://example.com' 
-    vcsUrl = 'https://github.com/example/repo' 
+    website = 'https://www.lambdatest.com/' 
+    vcsUrl = 'https://github.com/LambdaTest/lambdatest-gradle-plugin' 
 
     plugins {
         lambdatestPlugin {
             id = 'com.lambdatest.gradle'
-            displayName = 'LambdaTest Plugin' 
-            description = 'Runs Espresso tests on lambdatest'
+            displayName = 'LambdaTest Gradle Plugin' 
+            description = 'Runs Espresso tests on LambdaTest'
             tags = ['espresso', 'test', 'lambdatest', 'app', 'automation',
                 'appautomation']
             version = '1.0.0'
