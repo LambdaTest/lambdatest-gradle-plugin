@@ -1,0 +1,12 @@
+/.gradle/
+/build/
+/target/
+
+*.css
+*.gif
+*.xml
+*.project
+.DS_Store
+.classpath
+bin/
+work/

@@ -1,0 +1,34 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.16.0'
+}
+
+version = '1.0.0'
+
+
+pluginBundle {
+    website = 'https://www.lambdatest.com/' 
+    vcsUrl = 'https://github.com/LambdaTest/lambdatest-gradle-plugin' 
+
+    plugins {
+        lambdatestPlugin {
+            id = 'com.lambdatest.gradle'
+            displayName = 'LambdaTest Gradle Plugin' 
+            description = 'Runs Espresso tests on LambdaTest'
+            tags = ['espresso', 'test', 'lambdatest', 'app', 'automation',
+                'appautomation']
+            version = '1.0.0'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    implementation 'ch.qos.logback:logback-classic:1.2.6'
+}
