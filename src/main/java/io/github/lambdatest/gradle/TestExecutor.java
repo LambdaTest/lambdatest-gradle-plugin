@@ -1,4 +1,4 @@
-package com.lambdatest.gradle;
+package io.github.lambdatest.gradle;
 
 import okhttp3.*;
 import java.io.IOException;

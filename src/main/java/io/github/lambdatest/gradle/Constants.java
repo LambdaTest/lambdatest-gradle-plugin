@@ -1,4 +1,4 @@
-package com.lambdatest.gradle;
+package io.github.lambdatest.gradle;
 
 public class Constants {
     public static final String API_URL = "https://manual-api.lambdatest.com/app/uploadFramework";
