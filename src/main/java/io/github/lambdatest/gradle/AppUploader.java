@@ -1,4 +1,4 @@
-package com.lambdatest.gradle;
+package io.github.lambdatest.gradle;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
