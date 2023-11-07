@@ -24,12 +24,16 @@ public class LambdaTestTask extends DefaultTask {
     private Boolean tunnel;
     private String tunnelName;
     private String geoLocation;
+    private Boolean isFlutter;
+    private String appId;
+    private String testSuiteId;
 
     @TaskAction
     public void runLambdaTest() {
         logger.info("Starting LambdaTest task...");
 
         // Upload app
+        if (appId == null && appFilePath != null) {
         logger.info("Uploading app...");
         AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
         String appId = appUploader.uploadApp();
@@ -38,8 +42,10 @@ public class LambdaTestTask extends DefaultTask {
             throw new RuntimeException("Failed to upload the app.");
         }
         logger.info("App uploaded successfully with ID: " + appId);
+    }
 
         // Upload test suite
+        if(testSuiteId == null && testSuiteFilePath != null){
         logger.info("Uploading test suite...");
         String testSuiteId;
         try {
@@ -54,10 +60,10 @@ public class LambdaTestTask extends DefaultTask {
             throw new RuntimeException("Failed to upload the test suite.");
         }
         logger.info("Test suite uploaded successfully with ID: " + testSuiteId);
-
+    }
         // Execute tests
         logger.info("Executing tests...");
-        TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device);
+        TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
         Map<String, String> params = new HashMap<>();
         
         if (build != null) params.put("build", build);
@@ -131,5 +137,33 @@ public class LambdaTestTask extends DefaultTask {
 
     public void setGeoLocation(String geoLocation) {
         this.geoLocation = geoLocation;
+    }
+
+    public boolean getIsFlutter() {
+        return isFlutter != null && isFlutter;
+    }
+
+    public void setIsFlutter(Boolean isFlutter) {
+        this.isFlutter = isFlutter;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public void setAppId(String appId) {
+        if (appId != null && !appId.trim().isEmpty()) {
+            this.appId = appId;
+        }
+    }
+
+    public String getTestSuiteId() {
+        return testSuiteId;
+    }
+
+    public void setTestSuiteId(String testSuiteId) {
+        if (testSuiteId != null && !testSuiteId.trim().isEmpty()) {
+            this.testSuiteId = testSuiteId;
+        }
     }
 }

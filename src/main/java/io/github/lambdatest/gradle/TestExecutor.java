@@ -12,13 +12,15 @@ public class TestExecutor {
     private String appId;
     private String testSuiteId;
     private String device;
+    private Boolean isFlutter;
 
-    public TestExecutor(String username, String accessKey, String appId, String testSuiteId, String device) {
+    public TestExecutor(String username, String accessKey, String appId, String testSuiteId, String device, Boolean isFlutter) {
         this.username = username;
         this.accessKey = accessKey;
         this.appId = appId;
         this.testSuiteId = testSuiteId;
         this.device = device;
+        this.isFlutter = isFlutter;
     }
 
     public void executeTests(Map<String, String> params) throws IOException {
@@ -43,10 +45,11 @@ public class TestExecutor {
 
             jsonBodyBuilder.append("\n}");
 
+            String url = (isFlutter == null || !isFlutter) ? Constants.BUILD_URL : Constants.FLUTTER_BUILD_URL;
             RequestBody body = RequestBody.create(mediaType,jsonBodyBuilder.toString());
 
             Request request = new Request.Builder()
-                    .url(Constants.BUILD_URL)
+                    .url(url)
                     .method("POST", body)
                     .addHeader("Authorization", Credentials.basic(username, accessKey))
                     .addHeader("Content-Type", "application/json")
