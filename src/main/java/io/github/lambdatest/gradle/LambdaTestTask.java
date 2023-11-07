@@ -1,11 +1,13 @@
 package io.github.lambdatest.gradle;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Logger;
+import org.gradle.api.tasks.Optional;
 
 public class LambdaTestTask extends DefaultTask {
 
@@ -24,8 +26,13 @@ public class LambdaTestTask extends DefaultTask {
     private Boolean tunnel;
     private String tunnelName;
     private String geoLocation;
+    @Input
     private Boolean isFlutter;
+    @Input
+    @Optional
     private String appId;
+    @Input
+    @Optional
     private String testSuiteId;
 
     @TaskAction
