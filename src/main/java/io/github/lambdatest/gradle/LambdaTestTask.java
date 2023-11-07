@@ -4,6 +4,8 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -38,34 +40,36 @@ public class LambdaTestTask extends DefaultTask {
         logger.info("Starting LambdaTest task...");
 
         // Upload app
-        if (appId == null && appFilePath != null) {
-        logger.info("Uploading app...");
-        AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
-        String appId = appUploader.uploadApp();
-        if (appId == null) {
-            logger.severe("Failed to upload the app.");
-            throw new RuntimeException("Failed to upload the app.");
-        }
-        logger.info("App uploaded successfully with ID: " + appId);
-    }
+                CompletableFuture<String> appIdFuture = null;
+        CompletableFuture<String> testSuiteIdFuture = null;
 
-        // Upload test suite
-        if(testSuiteId == null && testSuiteFilePath != null){
-        logger.info("Uploading test suite...");
-        String testSuiteId;
-        try {
+        if (appId == null && appFilePath !=null) {
+            logger.info("Uploading app...");
+            AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
+            appIdFuture = appUploader.uploadAppAsync();
+        }
+
+        if (testSuiteId == null && testSuiteFilePath !=null) {
+            logger.info("Uploading test suite...");
             TestSuiteUploader testSuiteUploader = new TestSuiteUploader(username, accessKey, testSuiteFilePath);
-            testSuiteId = testSuiteUploader.uploadTestSuite();
-        } catch (IOException e) {
-            logger.severe("Failed to upload the test suite: " + e.getMessage());
-            throw new RuntimeException("Failed to upload the test suite: " + e.getMessage(), e);
+            testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
-        if (testSuiteId == null) {
-            logger.severe("Failed to upload the test suite.");
-            throw new RuntimeException("Failed to upload the test suite.");
+
+        // Ensure both uploads are completed before continuing
+        try {
+            if (appIdFuture != null) {
+                appId = appIdFuture.join(); // This will throw if the uploadAppAsync operation failed
+                logger.info("App uploaded successfully with ID: " + appId);
+            }
+
+            if (testSuiteIdFuture != null) {
+                testSuiteId = testSuiteIdFuture.join(); // This will throw if the uploadTestSuiteAsync operation failed
+                logger.info("Test suite uploaded successfully with ID: " + testSuiteId);
+            }
+        } catch (CompletionException e) {
+            throw new RuntimeException("Failed to upload app or test suite.", e.getCause());
         }
-        logger.info("Test suite uploaded successfully with ID: " + testSuiteId);
-    }
+        
         // Execute tests
         logger.info("Executing tests...");
         TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);

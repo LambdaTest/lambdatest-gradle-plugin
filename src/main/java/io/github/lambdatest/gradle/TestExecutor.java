@@ -42,6 +42,11 @@ public class TestExecutor {
             if (params.get("tunnel") != null) jsonBodyBuilder.append(String.format(",\n    \"tunnel\": %s", params.get("tunnel")));
             if (params.get("tunnelName") != null) jsonBodyBuilder.append(String.format(",\n    \"tunnelName\": \"%s\"", params.get("tunnelName")));
             if (params.get("geoLocation") != null) jsonBodyBuilder.append(String.format(",\n    \"geoLocation\": \"%s\"", params.get("geoLocation")));
+            if (params.get("fixedIP") != null) jsonBodyBuilder.append(String.format(",\n    \"fixedIP\": %s", params.get("fixedIP")));
+            if (params.get("globalHttpProxy") != null) jsonBodyBuilder.append(String.format(",\n    \"globalHttpProxy\": %s", params.get("globalHttpProxy")));
+            if (params.get("singleRunnerInvocation") != null) jsonBodyBuilder.append(String.format(",\n    \"singleRunnerInvocation\": %s", params.get("singleRunnerInvocation")));
+            if (params.get("clearPackageData") != null) jsonBodyBuilder.append(String.format(",\n    \"clearPackageData\": %s", params.get("clearPackageData")));
+            if (params.get("disableAnimation") != null) jsonBodyBuilder.append(String.format(",\n    \"disableAnimation\": %s", params.get("disableAnimation")));
 
             jsonBodyBuilder.append("\n}");
 
