@@ -1,13 +1,11 @@
 package io.github.lambdatest.gradle;
 
 import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.TaskAction;
 import java.io.IOException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.logging.Logger;
-import org.gradle.api.tasks.Optional;
 
 public class LambdaTestTask extends DefaultTask {
 
@@ -26,13 +24,13 @@ public class LambdaTestTask extends DefaultTask {
     private Boolean tunnel;
     private String tunnelName;
     private String geoLocation;
-    @Input
+    private Boolean disableAnimation;
+    private Boolean clearPackageData;
+    private Boolean singleRunnerInvocation;
+    private Boolean globalHttpProxy;
+    private String fixedIP;
     private Boolean isFlutter;
-    @Input
-    @Optional
     private String appId;
-    @Input
-    @Optional
     private String testSuiteId;
 
     @TaskAction
@@ -81,6 +79,11 @@ public class LambdaTestTask extends DefaultTask {
         if (tunnel != null) params.put("tunnel", tunnel.toString());
         if (tunnelName != null) params.put("tunnelName", tunnelName);
         if (geoLocation != null) params.put("geoLocation", geoLocation);
+        if (disableAnimation != null) params.put("disableAnimation", disableAnimation.toString());
+        if (clearPackageData != null) params.put("clearPackageData", clearPackageData.toString());
+        if (singleRunnerInvocation != null) params.put("singleRunnerInvocation", singleRunnerInvocation.toString());
+        if (globalHttpProxy != null) params.put("globalHttpProxy", globalHttpProxy.toString());
+        if (fixedIP != null) params.put("fixedIP", fixedIP);
 
         try {
             testExecutor.executeTests(params);
@@ -92,7 +95,7 @@ public class LambdaTestTask extends DefaultTask {
         logger.info("LambdaTest task completed.");
     }
 
-    // Getter and setter methods for the properties
+    // setter methods for the properties
 
     public void setUsername(String username) {
         this.username = username;
@@ -145,27 +148,35 @@ public class LambdaTestTask extends DefaultTask {
     public void setGeoLocation(String geoLocation) {
         this.geoLocation = geoLocation;
     }
+    
+    public void setDisableAnimation(Boolean disableAnimation) {
+        this.disableAnimation = disableAnimation;
+    }
 
-    public boolean getIsFlutter() {
-        return isFlutter != null && isFlutter;
+    public void setClearPackageData(Boolean clearPackageData) {
+        this.clearPackageData = clearPackageData;
+    }
+
+    public void setSingleRunnerInvocation(Boolean singleRunnerInvocation) {
+        this.singleRunnerInvocation = singleRunnerInvocation;
+    }
+
+    public void setGlobalHttpProxy(Boolean globalHttpProxy) {
+        this.globalHttpProxy = globalHttpProxy;
+    }
+
+    public void setFixedIP(String fixedIP) {
+        this.fixedIP = fixedIP;
     }
 
     public void setIsFlutter(Boolean isFlutter) {
-        this.isFlutter = isFlutter;
-    }
-
-    public String getAppId() {
-        return appId;
+        this.isFlutter = (isFlutter != null && isFlutter);
     }
 
     public void setAppId(String appId) {
         if (appId != null && !appId.trim().isEmpty()) {
             this.appId = appId;
         }
-    }
-
-    public String getTestSuiteId() {
-        return testSuiteId;
     }
 
     public void setTestSuiteId(String testSuiteId) {
