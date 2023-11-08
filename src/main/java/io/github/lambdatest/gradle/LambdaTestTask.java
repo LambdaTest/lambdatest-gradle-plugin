@@ -7,17 +7,15 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.HashMap;
-import java.util.logging.Logger;
+import java.util.List;
 
 public class LambdaTestTask extends DefaultTask {
-
-    private static final Logger logger = Logger.getLogger(LambdaTestTask.class.getName());
 
     private String username;
     private String accessKey;
     private String appFilePath;
     private String testSuiteFilePath;
-    private String device;
+    private List<String> device;
     private String build;
     private Boolean deviceLog;
     private Integer idleTimeout;
@@ -30,27 +28,28 @@ public class LambdaTestTask extends DefaultTask {
     private Boolean clearPackageData;
     private Boolean singleRunnerInvocation;
     private Boolean globalHttpProxy;
-    private String fixedIP;
+    private String fixedIp;
     private Boolean isFlutter;
     private String appId;
     private String testSuiteId;
+    private Integer queueTimeout;
 
     @TaskAction
     public void runLambdaTest() {
-        logger.info("Starting LambdaTest task...");
+        System.out.println("Starting LambdaTest task...");
 
         // Upload app
-                CompletableFuture<String> appIdFuture = null;
+        CompletableFuture<String> appIdFuture = null;
         CompletableFuture<String> testSuiteIdFuture = null;
 
         if (appId == null && appFilePath !=null) {
-            logger.info("Uploading app...");
+            System.out.println("Uploading app...");
             AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
             appIdFuture = appUploader.uploadAppAsync();
         }
 
         if (testSuiteId == null && testSuiteFilePath !=null) {
-            logger.info("Uploading test suite...");
+            System.out.println("Uploading test suite...");
             TestSuiteUploader testSuiteUploader = new TestSuiteUploader(username, accessKey, testSuiteFilePath);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
@@ -58,20 +57,21 @@ public class LambdaTestTask extends DefaultTask {
         // Ensure both uploads are completed before continuing
         try {
             if (appIdFuture != null) {
-                appId = appIdFuture.join(); // This will throw if the uploadAppAsync operation failed
-                logger.info("App uploaded successfully with ID: " + appId);
+                appId = appIdFuture.join();
+                System.out.println("App uploaded successfully with ID: " + appId);
             }
 
             if (testSuiteIdFuture != null) {
-                testSuiteId = testSuiteIdFuture.join(); // This will throw if the uploadTestSuiteAsync operation failed
-                logger.info("Test suite uploaded successfully with ID: " + testSuiteId);
+                testSuiteId = testSuiteIdFuture.join(); 
+                System.out.println("Test suite uploaded successfully with ID: " + testSuiteId);
             }
         } catch (CompletionException e) {
-            throw new RuntimeException("Failed to upload app or test suite.", e.getCause());
+            System.err.println("Failed to execute tasks: " + e.getMessage());
+            throw new RuntimeException(e);
         }
         
         // Execute tests
-        logger.info("Executing tests...");
+        System.out.println("Executing tests...");
         TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
         Map<String, String> params = new HashMap<>();
         
@@ -87,16 +87,16 @@ public class LambdaTestTask extends DefaultTask {
         if (clearPackageData != null) params.put("clearPackageData", clearPackageData.toString());
         if (singleRunnerInvocation != null) params.put("singleRunnerInvocation", singleRunnerInvocation.toString());
         if (globalHttpProxy != null) params.put("globalHttpProxy", globalHttpProxy.toString());
-        if (fixedIP != null) params.put("fixedIP", fixedIP);
+        if (fixedIp != null) params.put("fixedIp", fixedIp);
+        if (queueTimeout != null) params.put("queueTimeout", queueTimeout.toString());
 
         try {
             testExecutor.executeTests(params);
         } catch (IOException e) {
-            logger.severe("Failed to execute tests: " + e.getMessage());
-            throw new RuntimeException("Failed to execute tests: " + e.getMessage(), e);
+            System.err.println("Failed to execute tests: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-
-        logger.info("LambdaTest task completed.");
+        System.out.println("LambdaTest task completed.");
     }
 
     // setter methods for the properties
@@ -117,7 +117,7 @@ public class LambdaTestTask extends DefaultTask {
         this.testSuiteFilePath = testSuiteFilePath;
     }
 
-    public void setDevice(String device) {
+    public void setDevice(List<String> device) {
         this.device = device;
     }
 
@@ -169,8 +169,12 @@ public class LambdaTestTask extends DefaultTask {
         this.globalHttpProxy = globalHttpProxy;
     }
 
-    public void setFixedIP(String fixedIP) {
-        this.fixedIP = fixedIP;
+    public void setFixedIp(String fixedIp) {
+        this.fixedIp = fixedIp;
+    }
+
+    public void setQueueTimeout(Integer queueTimeout) {
+        this.queueTimeout = queueTimeout;
     }
 
     public void setIsFlutter(Boolean isFlutter) {

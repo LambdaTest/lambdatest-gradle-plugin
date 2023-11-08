@@ -5,11 +5,9 @@ import com.google.gson.JsonParser;
 import okhttp3.*;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 public class AppUploader {
         
-    private final static Logger logger = Logger.getLogger(AppUploader.class.getName());
     private String username;
     private String accessKey;
     private String appFilePath;
@@ -43,12 +41,12 @@ public class AppUploader {
                     JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
                     String appId = jsonObject.get("app_id").getAsString();
                     
-                    logger.info("Uploaded app ID: " + appId);
+                    System.out.println("Uploaded app ID: " + appId);
                     return appId;
                 }
             } catch (IOException e) {
-                logger.severe("Error uploading app: " + e.getMessage());
-                throw new RuntimeException(e); // CompletableFuture will catch this exception
+                System.err.println("Error uploading app: " + e.getMessage());
+                throw new RuntimeException(e); 
             }
         });
     }

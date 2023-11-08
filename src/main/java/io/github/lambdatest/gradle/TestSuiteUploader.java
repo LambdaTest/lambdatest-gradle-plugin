@@ -5,10 +5,9 @@ import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.concurrent.CompletableFuture;
-import java.util.logging.Logger;
 
 public class TestSuiteUploader {
-    private final static Logger logger = Logger.getLogger(TestSuiteUploader.class.getName());
+
     private String username;
     private String accessKey;
     private String testSuiteFilePath;
@@ -41,12 +40,12 @@ public class TestSuiteUploader {
                     JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
                     String testSuiteId = jsonObject.get("app_id").getAsString();
 
-                    logger.info("Uploaded test suite ID : " + testSuiteId);
+                    System.out.println("Uploaded test suite ID : " + testSuiteId);
                     return testSuiteId;
                 }
             } catch (IOException e) {
-                logger.severe("Error uploading test suite app: " + e.getMessage());
-                throw new RuntimeException(e); // CompletableFuture will catch this exception
+                System.err.println("Error uploading test suite app: " + e.getMessage());
+                throw new RuntimeException(e);
             }
         });
     }
