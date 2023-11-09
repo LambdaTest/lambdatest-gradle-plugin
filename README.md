@@ -32,6 +32,9 @@ runLambdaTest {
     appFilePath = 'pathToYourAppFile'
     testSuiteFilePath = 'pathToYourTestSuite'
     device = 'desiredDeviceForTesting'
+    isFlutter = true //if you are running flutter dart tests
+    appId = "lt//1234343" //provide this only if you have already uploaded the app
+    testSuiteId = "lt//1223444" //provide this only if you have already uploaded the app
 }
 ```
 ### Supported Capabilties:

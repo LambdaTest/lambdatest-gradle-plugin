@@ -4,18 +4,18 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.HashMap;
-import java.util.logging.Logger;
+import java.util.List;
 
 public class LambdaTestTask extends DefaultTask {
-
-    private static final Logger logger = Logger.getLogger(LambdaTestTask.class.getName());
 
     private String username;
     private String accessKey;
     private String appFilePath;
     private String testSuiteFilePath;
-    private String device;
+    private List<String> device;
     private String build;
     private Boolean deviceLog;
     private Integer idleTimeout;
@@ -24,40 +24,55 @@ public class LambdaTestTask extends DefaultTask {
     private Boolean tunnel;
     private String tunnelName;
     private String geoLocation;
+    private Boolean disableAnimation;
+    private Boolean clearPackageData;
+    private Boolean singleRunnerInvocation;
+    private Boolean globalHttpProxy;
+    private String fixedIp;
+    private Boolean isFlutter;
+    private String appId;
+    private String testSuiteId;
+    private Integer queueTimeout;
 
     @TaskAction
     public void runLambdaTest() {
-        logger.info("Starting LambdaTest task...");
+        System.out.println("Starting LambdaTest task...");
 
         // Upload app
-        logger.info("Uploading app...");
-        AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
-        String appId = appUploader.uploadApp();
-        if (appId == null) {
-            logger.severe("Failed to upload the app.");
-            throw new RuntimeException("Failed to upload the app.");
-        }
-        logger.info("App uploaded successfully with ID: " + appId);
+        CompletableFuture<String> appIdFuture = null;
+        CompletableFuture<String> testSuiteIdFuture = null;
 
-        // Upload test suite
-        logger.info("Uploading test suite...");
-        String testSuiteId;
-        try {
+        if (appId == null && appFilePath !=null) {
+            System.out.println("Uploading app...");
+            AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
+            appIdFuture = appUploader.uploadAppAsync();
+        }
+
+        if (testSuiteId == null && testSuiteFilePath !=null) {
+            System.out.println("Uploading test suite...");
             TestSuiteUploader testSuiteUploader = new TestSuiteUploader(username, accessKey, testSuiteFilePath);
-            testSuiteId = testSuiteUploader.uploadTestSuite();
-        } catch (IOException e) {
-            logger.severe("Failed to upload the test suite: " + e.getMessage());
-            throw new RuntimeException("Failed to upload the test suite: " + e.getMessage(), e);
+            testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
-        if (testSuiteId == null) {
-            logger.severe("Failed to upload the test suite.");
-            throw new RuntimeException("Failed to upload the test suite.");
-        }
-        logger.info("Test suite uploaded successfully with ID: " + testSuiteId);
 
+        // Ensure both uploads are completed before continuing
+        try {
+            if (appIdFuture != null) {
+                appId = appIdFuture.join();
+                System.out.println("App uploaded successfully with ID: " + appId);
+            }
+
+            if (testSuiteIdFuture != null) {
+                testSuiteId = testSuiteIdFuture.join(); 
+                System.out.println("Test suite uploaded successfully with ID: " + testSuiteId);
+            }
+        } catch (CompletionException e) {
+            System.err.println("Failed to execute tasks: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+        
         // Execute tests
-        logger.info("Executing tests...");
-        TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device);
+        System.out.println("Executing tests...");
+        TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
         Map<String, String> params = new HashMap<>();
         
         if (build != null) params.put("build", build);
@@ -68,18 +83,23 @@ public class LambdaTestTask extends DefaultTask {
         if (tunnel != null) params.put("tunnel", tunnel.toString());
         if (tunnelName != null) params.put("tunnelName", tunnelName);
         if (geoLocation != null) params.put("geoLocation", geoLocation);
+        if (disableAnimation != null) params.put("disableAnimation", disableAnimation.toString());
+        if (clearPackageData != null) params.put("clearPackageData", clearPackageData.toString());
+        if (singleRunnerInvocation != null) params.put("singleRunnerInvocation", singleRunnerInvocation.toString());
+        if (globalHttpProxy != null) params.put("globalHttpProxy", globalHttpProxy.toString());
+        if (fixedIp != null) params.put("fixedIp", fixedIp);
+        if (queueTimeout != null) params.put("queueTimeout", queueTimeout.toString());
 
         try {
             testExecutor.executeTests(params);
         } catch (IOException e) {
-            logger.severe("Failed to execute tests: " + e.getMessage());
-            throw new RuntimeException("Failed to execute tests: " + e.getMessage(), e);
+            System.err.println("Failed to execute tests: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-
-        logger.info("LambdaTest task completed.");
+        System.out.println("LambdaTest task completed.");
     }
 
-    // Getter and setter methods for the properties
+    // setter methods for the properties
 
     public void setUsername(String username) {
         this.username = username;
@@ -97,7 +117,7 @@ public class LambdaTestTask extends DefaultTask {
         this.testSuiteFilePath = testSuiteFilePath;
     }
 
-    public void setDevice(String device) {
+    public void setDevice(List<String> device) {
         this.device = device;
     }
 
@@ -131,5 +151,45 @@ public class LambdaTestTask extends DefaultTask {
 
     public void setGeoLocation(String geoLocation) {
         this.geoLocation = geoLocation;
+    }
+    
+    public void setDisableAnimation(Boolean disableAnimation) {
+        this.disableAnimation = disableAnimation;
+    }
+
+    public void setClearPackageData(Boolean clearPackageData) {
+        this.clearPackageData = clearPackageData;
+    }
+
+    public void setSingleRunnerInvocation(Boolean singleRunnerInvocation) {
+        this.singleRunnerInvocation = singleRunnerInvocation;
+    }
+
+    public void setGlobalHttpProxy(Boolean globalHttpProxy) {
+        this.globalHttpProxy = globalHttpProxy;
+    }
+
+    public void setFixedIp(String fixedIp) {
+        this.fixedIp = fixedIp;
+    }
+
+    public void setQueueTimeout(Integer queueTimeout) {
+        this.queueTimeout = queueTimeout;
+    }
+
+    public void setIsFlutter(Boolean isFlutter) {
+        this.isFlutter = (isFlutter != null && isFlutter);
+    }
+
+    public void setAppId(String appId) {
+        if (appId != null && !appId.trim().isEmpty()) {
+            this.appId = appId;
+        }
+    }
+
+    public void setTestSuiteId(String testSuiteId) {
+        if (testSuiteId != null && !testSuiteId.trim().isEmpty()) {
+            this.testSuiteId = testSuiteId;
+        }
     }
 }

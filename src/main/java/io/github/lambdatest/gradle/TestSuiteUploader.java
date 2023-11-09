@@ -4,10 +4,10 @@ import okhttp3.*;
 import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.util.logging.Logger;
+import java.util.concurrent.CompletableFuture;
 
 public class TestSuiteUploader {
-    private final static Logger logger = Logger.getLogger(TestSuiteUploader.class.getName());
+
     private String username;
     private String accessKey;
     private String testSuiteFilePath;
@@ -18,31 +18,35 @@ public class TestSuiteUploader {
         this.testSuiteFilePath = testSuiteFilePath;
     }
 
-    public String uploadTestSuite() throws IOException {
-        try{
-            OkHttpClient client = new OkHttpClient().newBuilder().build();
-            RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                    .addFormDataPart("appFile", testSuiteFilePath,
-                            RequestBody.create(
-                                    MediaType.parse("application/octet-stream"),new java.io.File(testSuiteFilePath)))
-                    .addFormDataPart("type", "espresso-android")
-                    .build();
-            Request request = new Request.Builder()
-                    .url(Constants.API_URL)
-                    .method("POST", body)
-                    .addHeader("Authorization", Credentials.basic(username, accessKey))
-                    .build();
-            Response response = client.newCall(request).execute();
-            String responseBody = response.body().string();
-            JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
-            String appId = jsonObject.get("app_id").getAsString();
+    public CompletableFuture<String> uploadTestSuiteAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                OkHttpClient client = new OkHttpClient().newBuilder().build();
+                MediaType mediaType = MediaType.parse("application/octet-stream");
+                RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("appFile", testSuiteFilePath,
+                                RequestBody.create(mediaType, new java.io.File(testSuiteFilePath)))
+                        .addFormDataPart("type", "espresso-android")
+                        .build();
+                Request request = new Request.Builder()
+                        .url(Constants.API_URL)
+                        .method("POST", body)
+                        .addHeader("Authorization", Credentials.basic(username, accessKey))
+                        .build();
+                try (Response response = client.newCall(request).execute()) {
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
-            logger.info("Uploaded test suite app ID : " + appId);
+                    String responseBody = response.body().string();
+                    JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
+                    String testSuiteId = jsonObject.get("app_id").getAsString();
 
-            return appId;
-    } catch (IOException e) {
-        logger.severe("Error uploading test suite app: " + e.getMessage());
-        return null;
-    }
+                    System.out.println("Uploaded test suite ID : " + testSuiteId);
+                    return testSuiteId;
+                }
+            } catch (IOException e) {
+                System.err.println("Error uploading test suite app: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
