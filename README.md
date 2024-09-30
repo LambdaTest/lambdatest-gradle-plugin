@@ -1,13 +1,15 @@
 # lambdatest-gradle-plugin
+
 This repository contains the source code for LambdaTest's Espresso Gradle plugin.
 
 ## Purpose
-The functions of this plugins are:
+The functions of this plugin are:
 - Uploads any `Android` app (.apk) and `Espresso` Test Suite app (.apk) file.
-- Execute Espresso tests on LamdaTest.
+- Execute Espresso tests on LambdaTest.
 
 ## Usage
 To use this plugin in your project, please do the following:
+
 ### Add to `build.gradle`:
 ```
 buildscript {
@@ -37,7 +39,8 @@ runLambdaTest {
     testSuiteId = "lt//1223444" //provide this only if you have already uploaded the app
 }
 ```
-### Supported Capabilties:
+### Supported Capabilities:
+
 The following capabilities are supported:
 
 - `app`: Enter the app id generated while uploading the app. Example:lt://APP123456789123456789
@@ -56,3 +59,19 @@ To run the plugin added in the project's `build.gradle`:
 ```
 ./gradlew runLambdaTest
 ```
+
+## About LambdaTest
+
+[LambdaTest](https://www.lambdatest.com/) is a cloud based selenium grid infrastructure that can
+help you run automated cross browser compatibility tests on 2000+
+different browser and operating system environments. LambdaTest supports
+all programming languages and frameworks that are supported with Selenium,
+and have easy integrations with all popular CI/CD platforms. It's a perfect
+solution to bring your [selenium automation testing](https://www.lambdatest.com/selenium-automation)
+to cloud based infrastructure that not only helps you increase your test coverage over
+multiple desktop and mobile browsers, but also allows you to cut down your
+test execution time by running tests on parallel.
+
+## License
+
+Licensed under the [APACHE license](./LICENSE).
