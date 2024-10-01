@@ -27,22 +27,32 @@ public class AppUploader {
     }
 
     public CompletableFuture<String> uploadAppAsync() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                OkHttpClient client = new OkHttpClient().newBuilder().build();
-                MediaType mediaType = MediaType.parse("application/octet-stream");
-                RequestBody body = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                        .addFormDataPart("appFile", appFilePath,
-                                RequestBody.create(mediaType, new java.io.File(appFilePath)))
-                        .addFormDataPart("type", "espresso-android")
-                        .build();
-                Request request = new Request.Builder()
-                        .url(Constants.API_URL)
-                        .method("POST", body)
-                        .addHeader("Authorization", Credentials.basic(username, accessKey))
-                        .build();
-                try (Response response = client.newCall(request).execute()) {
-                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+        return CompletableFuture.supplyAsync(
+                () -> {
+                    try {
+                        OkHttpClient client = new OkHttpClient().newBuilder().build();
+                        MediaType mediaType = MediaType.parse("application/octet-stream");
+                        RequestBody body =
+                                new MultipartBody.Builder()
+                                        .setType(MultipartBody.FORM)
+                                        .addFormDataPart(
+                                                "appFile",
+                                                appFilePath,
+                                                RequestBody.create(
+                                                        mediaType, new java.io.File(appFilePath)))
+                                        .addFormDataPart("type", "espresso-android")
+                                        .build();
+                        Request request =
+                                new Request.Builder()
+                                        .url(Constants.API_URL)
+                                        .method("POST", body)
+                                        .addHeader(
+                                                "Authorization",
+                                                Credentials.basic(username, accessKey))
+                                        .build();
+                        try (Response response = client.newCall(request).execute()) {
+                            if (!response.isSuccessful())
+                                throw new IOException("Unexpected code " + response);
 
                     // Parse the JSON response and extract the app_id
                     String responseBody = response.body().string();

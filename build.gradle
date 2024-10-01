@@ -1,6 +1,7 @@
 plugins {
     id 'java-gradle-plugin'
     id 'com.gradle.plugin-publish' version '1.1.0'
+    id 'com.diffplug.spotless' version '6.25.0'
 }
 
 version = '1.0.5'
@@ -19,18 +20,25 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
 }
 
-
-
 gradlePlugin {
-  website = 'https://www.lambdatest.com'
-  vcsUrl = 'https://github.com/LambdaTest/lambdatest-gradle-plugin'
-  plugins {
-    lambdatestPlugin {
-      id = 'io.github.lambdatest.gradle'
-      implementationClass = 'io.github.lambdatest.gradle.LambdaTestPlugin'
-      displayName = 'LambdaTest Gradle Plugin' 
-      description = 'Runs Espresso tests on LambdaTest'
-      tags.set(['espresso', 'test', 'lambdatest', 'app', 'automation', 'appautomation'])
+    website = 'https://www.lambdatest.com'
+    vcsUrl = 'https://github.com/LambdaTest/lambdatest-gradle-plugin'
+    plugins {
+        lambdatestPlugin {
+            id = 'io.github.lambdatest.gradle'
+            implementationClass = 'io.github.lambdatest.gradle.LambdaTestPlugin'
+            displayName = 'LambdaTest Gradle Plugin'
+            description = 'Runs Espresso tests on LambdaTest'
+            tags.set(['espresso', 'test', 'lambdatest', 'app', 'automation', 'appautomation'])
+        }
     }
-  }
+}
+
+spotless {
+    java {
+        importOrder()
+        removeUnusedImports()
+        googleJavaFormat().aosp()
+        formatAnnotations()
+    }
 }
