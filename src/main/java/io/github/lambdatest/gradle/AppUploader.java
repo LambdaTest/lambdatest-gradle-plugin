@@ -13,6 +13,9 @@ public class AppUploader {
     private String appFilePath;
 
     public AppUploader(String username, String accessKey, String appFilePath) {
+        if (username == null || accessKey == null || appFilePath == null)
+            throw new IllegalArgumentException("Arguments cannot be null");
+
         this.username = username;
         this.accessKey = accessKey;
         this.appFilePath = appFilePath;
