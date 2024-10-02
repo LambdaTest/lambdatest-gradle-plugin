@@ -2,6 +2,8 @@ package io.github.lambdatest.gradle;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -10,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class LambdaTestTask extends DefaultTask {
+
+    private static final Logger logger = LogManager.getLogger(LambdaTestTask.class);
 
     private String username;
     private String accessKey;
@@ -36,20 +40,20 @@ public class LambdaTestTask extends DefaultTask {
 
     @TaskAction
     public void runLambdaTest() {
-        System.out.println("Starting LambdaTest task...");
+        logger.info("Starting LambdaTest task...");
 
         // Upload app
         CompletableFuture<String> appIdFuture = null;
         CompletableFuture<String> testSuiteIdFuture = null;
 
-        if (appId == null && appFilePath !=null) {
-            System.out.println("Uploading app...");
+        if (appId == null && appFilePath != null) {
+            logger.info("Uploading app...");
             AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
             appIdFuture = appUploader.uploadAppAsync();
         }
 
-        if (testSuiteId == null && testSuiteFilePath !=null) {
-            System.out.println("Uploading test suite...");
+        if (testSuiteId == null && testSuiteFilePath != null) {
+            logger.info("Uploading test suite...");
             TestSuiteUploader testSuiteUploader = new TestSuiteUploader(username, accessKey, testSuiteFilePath);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
@@ -58,20 +62,20 @@ public class LambdaTestTask extends DefaultTask {
         try {
             if (appIdFuture != null) {
                 appId = appIdFuture.join();
-                System.out.println("App uploaded successfully with ID: " + appId);
+                logger.info("App uploaded successfully with ID: {}", appId);
             }
 
             if (testSuiteIdFuture != null) {
-                testSuiteId = testSuiteIdFuture.join(); 
-                System.out.println("Test suite uploaded successfully with ID: " + testSuiteId);
+                testSuiteId = testSuiteIdFuture.join();
+                logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
             }
         } catch (CompletionException e) {
-            System.err.println("Failed to execute tasks: " + e.getMessage());
+            logger.error("Failed to execute tasks: {}", e.getMessage());
             throw new RuntimeException(e);
         }
         
         // Execute tests
-        System.out.println("Executing tests...");
+        logger.info("Executing tests...");
         TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
         Map<String, String> params = new HashMap<>();
         
@@ -93,10 +97,10 @@ public class LambdaTestTask extends DefaultTask {
         try {
             testExecutor.executeTests(params);
         } catch (IOException e) {
-            System.err.println("Failed to execute tests: " + e.getMessage());
+            logger.error("Failed to execute tests: {}", e.getMessage());
             throw new RuntimeException(e);
         }
-        System.out.println("LambdaTest task completed.");
+        logger.info("LambdaTest task completed.");
     }
 
     // setter methods for the properties
