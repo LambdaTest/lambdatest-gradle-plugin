@@ -2,9 +2,9 @@ name: Check Format
 
 on:
   push:
-    branches: [ 'release', 'development' ]
+    branches: [ 'main' ]
   pull_request:
-    branches: [ 'release', 'development' ]
+    branches: [ 'main' ]
 
 jobs:
   check:
