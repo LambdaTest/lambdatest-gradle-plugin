@@ -52,6 +52,12 @@ so all code changes happen through pull requests.
 6. Rebase `dev` with your branch and push your changes.
 7. Raise a pull request against the master branch of the main repository.
 
+### Formatting code
+
+We use spotless to manage proper and consistent formatting throughout the project.
+- `./gradlew spotlessCheck` will check your code for formatting issues
+- `./gradlew spotlessApply` will fix the formatting issues (if any)
+
 ## **Committing Code**
 
 The repository contains one important (protected) branch:
