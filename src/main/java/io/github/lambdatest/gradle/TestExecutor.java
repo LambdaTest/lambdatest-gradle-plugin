@@ -1,12 +1,16 @@
 package io.github.lambdatest.gradle;
 
 import okhttp3.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TestExecutor {
+    private static final Logger logger = LogManager.getLogger(TestExecutor.class);
+
     private String username;
     private String accessKey;
     private String appId;
@@ -54,10 +58,10 @@ public class TestExecutor {
             if (params.get("disableAnimation") != null) jsonBodyBuilder.append(String.format(",\n    \"disableAnimation\": %s", params.get("disableAnimation")));
 
             jsonBodyBuilder.append("\n}");
-            System.out.println("Capabilties :"+ jsonBodyBuilder);
+            logger.info("Capabilities: {}", jsonBodyBuilder);
 
             String url = (isFlutter == null || !isFlutter) ? Constants.BUILD_URL : Constants.FLUTTER_BUILD_URL;
-            RequestBody body = RequestBody.create(mediaType,jsonBodyBuilder.toString());
+            RequestBody body = RequestBody.create(mediaType, jsonBodyBuilder.toString());
 
             Request request = new Request.Builder()
                     .url(url)
@@ -67,11 +71,11 @@ public class TestExecutor {
                     .build();
             Response response = client.newCall(request).execute();
 
-            System.out.println("Running Tests");
-            System.out.println(response.body().string());
-    } catch (IOException e) {
-        System.err.println("Error executing tests: " + e.getMessage());
-        throw new RuntimeException(e);
-    }
+            logger.info("Running Tests");
+            logger.info(response.body().string());
+        } catch (IOException e) {
+            logger.error("Error executing tests: {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 }

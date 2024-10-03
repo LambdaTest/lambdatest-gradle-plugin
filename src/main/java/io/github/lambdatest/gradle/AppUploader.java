@@ -3,11 +3,15 @@ package io.github.lambdatest.gradle;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import okhttp3.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 public class AppUploader {
-        
+
+    private static final Logger logger = LogManager.getLogger(AppUploader.class);
+
     private String username;
     private String accessKey;
     private String appFilePath;
@@ -40,13 +44,13 @@ public class AppUploader {
                     String responseBody = response.body().string();
                     JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
                     String appId = jsonObject.get("app_id").getAsString();
-                    
-                    System.out.println("Uploaded app ID: " + appId);
+
+                    logger.info("Uploaded app ID: {}", appId);
                     return appId;
                 }
             } catch (IOException e) {
-                System.err.println("Error uploading app: " + e.getMessage());
-                throw new RuntimeException(e); 
+                logger.error("Error uploading app: {}", e.getMessage());
+                throw new RuntimeException(e);
             }
         });
     }

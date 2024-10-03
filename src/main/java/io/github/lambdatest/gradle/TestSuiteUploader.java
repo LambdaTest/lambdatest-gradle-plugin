@@ -5,8 +5,12 @@ import java.io.IOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.util.concurrent.CompletableFuture;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class TestSuiteUploader {
+
+    private static final Logger logger = LogManager.getLogger(TestSuiteUploader.class);
 
     private String username;
     private String accessKey;
@@ -40,11 +44,11 @@ public class TestSuiteUploader {
                     JsonObject jsonObject = JsonParser.parseString(responseBody).getAsJsonObject();
                     String testSuiteId = jsonObject.get("app_id").getAsString();
 
-                    System.out.println("Uploaded test suite ID : " + testSuiteId);
+                    logger.info("Uploaded test suite ID: {}", testSuiteId);
                     return testSuiteId;
                 }
             } catch (IOException e) {
-                System.err.println("Error uploading test suite app: " + e.getMessage());
+                logger.error("Error uploading test suite app: {}", e.getMessage());
                 throw new RuntimeException(e);
             }
         });
