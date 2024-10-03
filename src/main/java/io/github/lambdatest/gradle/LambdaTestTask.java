@@ -1,15 +1,13 @@
 package io.github.lambdatest.gradle;
 
-import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.TaskAction;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
@@ -56,7 +54,8 @@ public class LambdaTestTask extends DefaultTask {
 
         if (testSuiteId == null && testSuiteFilePath != null) {
             logger.info("Uploading test suite...");
-            TestSuiteUploader testSuiteUploader = new TestSuiteUploader(username, accessKey, testSuiteFilePath);
+            TestSuiteUploader testSuiteUploader =
+                    new TestSuiteUploader(username, accessKey, testSuiteFilePath);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
 
@@ -78,7 +77,8 @@ public class LambdaTestTask extends DefaultTask {
 
         // Execute tests
         logger.info("Executing tests...");
-        TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
+        TestExecutor testExecutor =
+                new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
         Map<String, String> params = new HashMap<>();
 
         if (build != null) params.put("build", build);

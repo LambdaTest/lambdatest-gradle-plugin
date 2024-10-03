@@ -1,13 +1,12 @@
 package io.github.lambdatest.gradle;
 
-import okhttp3.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import okhttp3.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class TestExecutor {
     private static final Logger logger = LogManager.getLogger(TestExecutor.class);
@@ -103,7 +102,10 @@ public class TestExecutor {
             jsonBodyBuilder.append("\n}");
             logger.info("Capabilities: {}", jsonBodyBuilder);
 
-            String url = (isFlutter == null || !isFlutter) ? Constants.BUILD_URL : Constants.FLUTTER_BUILD_URL;
+            String url =
+                    (isFlutter == null || !isFlutter)
+                            ? Constants.BUILD_URL
+                            : Constants.FLUTTER_BUILD_URL;
             RequestBody body = RequestBody.create(mediaType, jsonBodyBuilder.toString());
 
             Request request =

@@ -4,9 +4,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import okhttp3.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import okhttp3.*;
 
 public class TestSuiteUploader {
 
@@ -56,13 +56,13 @@ public class TestSuiteUploader {
                                     JsonParser.parseString(responseBody).getAsJsonObject();
                             String testSuiteId = jsonObject.get("app_id").getAsString();
 
-                    logger.info("Uploaded test suite ID: {}", testSuiteId);
-                    return testSuiteId;
-                }
-            } catch (IOException e) {
-                logger.error("Error uploading test suite app: {}", e.getMessage());
-                throw new RuntimeException(e);
-            }
-        });
+                            logger.info("Uploaded test suite ID: {}", testSuiteId);
+                            return testSuiteId;
+                        }
+                    } catch (IOException e) {
+                        logger.error("Error uploading test suite app: {}", e.getMessage());
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 }
