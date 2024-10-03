@@ -70,7 +70,7 @@ public class LambdaTestTask extends DefaultTask {
                 logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
             }
         } catch (CompletionException e) {
-            logger.error("Failed to execute tasks: {}", e.getMessage());
+            logger.error("Failed to execute tasks: {}", e);
             throw new RuntimeException(e);
         }
         
