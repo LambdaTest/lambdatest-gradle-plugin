@@ -97,7 +97,7 @@ public class LambdaTestTask extends DefaultTask {
         try {
             testExecutor.executeTests(params);
         } catch (IOException e) {
-            logger.error("Failed to execute tests: {}", e.getMessage());
+            logger.error("Failed to execute tests: {}", e);
             throw new RuntimeException(e);
         }
         logger.info("LambdaTest task completed.");
