@@ -1,15 +1,15 @@
 package io.github.lambdatest.gradle;
 
-import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.TaskAction;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.HashMap;
-import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.TaskAction;
 
 public class LambdaTestTask extends DefaultTask {
 
@@ -54,7 +54,8 @@ public class LambdaTestTask extends DefaultTask {
 
         if (testSuiteId == null && testSuiteFilePath != null) {
             logger.info("Uploading test suite...");
-            TestSuiteUploader testSuiteUploader = new TestSuiteUploader(username, accessKey, testSuiteFilePath);
+            TestSuiteUploader testSuiteUploader =
+                    new TestSuiteUploader(username, accessKey, testSuiteFilePath);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
 
@@ -73,12 +74,13 @@ public class LambdaTestTask extends DefaultTask {
             logger.error("Failed to execute tasks: {}", e);
             throw new RuntimeException(e);
         }
-        
+
         // Execute tests
         logger.info("Executing tests...");
-        TestExecutor testExecutor = new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
+        TestExecutor testExecutor =
+                new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
         Map<String, String> params = new HashMap<>();
-        
+
         if (build != null) params.put("build", build);
         if (deviceLog != null) params.put("deviceLog", deviceLog.toString());
         if (idleTimeout != null) params.put("IdleTimeout", idleTimeout.toString());
@@ -89,7 +91,8 @@ public class LambdaTestTask extends DefaultTask {
         if (geoLocation != null) params.put("geoLocation", geoLocation);
         if (disableAnimation != null) params.put("disableAnimation", disableAnimation.toString());
         if (clearPackageData != null) params.put("clearPackageData", clearPackageData.toString());
-        if (singleRunnerInvocation != null) params.put("singleRunnerInvocation", singleRunnerInvocation.toString());
+        if (singleRunnerInvocation != null)
+            params.put("singleRunnerInvocation", singleRunnerInvocation.toString());
         if (globalHttpProxy != null) params.put("globalHttpProxy", globalHttpProxy.toString());
         if (fixedIp != null) params.put("fixedIp", fixedIp);
         if (queueTimeout != null) params.put("queueTimeout", queueTimeout.toString());
@@ -156,7 +159,7 @@ public class LambdaTestTask extends DefaultTask {
     public void setGeoLocation(String geoLocation) {
         this.geoLocation = geoLocation;
     }
-    
+
     public void setDisableAnimation(Boolean disableAnimation) {
         this.disableAnimation = disableAnimation;
     }
