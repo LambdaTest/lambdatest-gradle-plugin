@@ -22,8 +22,6 @@ import okhttp3.Response;
 public final class UploaderUtil {
     /**
      * Private constructor to prevent instantiation of this utility class.
-     *
-     * @throws UnsupportedOperationException always, as this class should not be instantiated
      */
     private UploaderUtil() {
         throw new UnsupportedOperationException(

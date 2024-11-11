@@ -25,7 +25,6 @@ public class AppUploader {
      * @param username The LambdaTest account username
      * @param accessKey The LambdaTest account access key
      * @param appFilePath The path to the application file to be uploaded
-     * @throws IllegalArgumentException if any of the parameters are null
      */
     public AppUploader(String username, String accessKey, String appFilePath) {
         if (username == null) throw new IllegalArgumentException("Username cannot be null");

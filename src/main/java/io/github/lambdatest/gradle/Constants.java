@@ -7,8 +7,6 @@ package io.github.lambdatest.gradle;
 public class Constants {
     /**
      * Private constructor to prevent instantiation of this utility class.
-     *
-     * @throws UnsupportedOperationException always, as this class should not be instantiated
      */
     private Constants() {
         throw new UnsupportedOperationException(
