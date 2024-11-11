@@ -1,6 +1,15 @@
 package io.github.lambdatest.gradle;
 
+/**
+ * Constants used throughout the LambdaTest Gradle plugin.
+ * This utility class provides centralized access to API endpoints and other constant values.
+ */
 public class Constants {
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     *
+     * @throws UnsupportedOperationException always, as this class should not be instantiated
+     */
     private Constants() {
         throw new UnsupportedOperationException(
                 "This is a utility class and cannot be instantiated");

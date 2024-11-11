@@ -12,14 +12,38 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ * Utility class providing common upload functionality for the LambdaTest Gradle plugin.
+ * This class handles the actual file upload process and response parsing.
+ *
+ * <p>This utility is used by both {@link AppUploader} and {@link TestSuiteUploader}
+ * to handle file uploads to the LambdaTest platform.</p>
+ */
 public final class UploaderUtil {
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     *
+     * @throws UnsupportedOperationException always, as this class should not be instantiated
+     */
     private UploaderUtil() {
         throw new UnsupportedOperationException(
                 "This is a utility class and cannot be instantiated");
     }
 
+    /**
+     * Uploads a file to LambdaTest and returns its ID.
+     *
+     * @param username The LambdaTest account username
+     * @param accessKey The LambdaTest account access key
+     * @param filePath The path to the file to be uploaded
+     * @return The ID of the uploaded file
+     * @throws IOException if there's an error during file upload or response parsing
+     * @implNote This method sends the file to {@link Constants#API_URL} and handles
+     *          the multipart form data construction and response parsing
+     */
     public static String uploadAndGetId(String username, String accessKey, String filePath)
             throws IOException {
+
         OkHttpClient client = new OkHttpClient();
 
         MediaType mediaType = MediaType.parse("application/octet-stream");
