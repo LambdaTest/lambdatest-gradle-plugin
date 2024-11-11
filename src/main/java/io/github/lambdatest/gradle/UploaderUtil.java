@@ -29,13 +29,14 @@ public final class UploaderUtil {
     /**
      * Uploads a file to LambdaTest and returns its ID.
      *
+     * <p>Implementation Note: This method sends the file to {@link Constants#API_URL} and handles the multipart form data construction and response parsing.</p>
+     *
      * @param username The LambdaTest account username
      * @param accessKey The LambdaTest account access key
      * @param filePath The path to the file to be uploaded
      * @return The ID of the uploaded file
      * @throws IOException if there's an error during file upload or response parsing
-     * @implNote This method sends the file to {@link Constants#API_URL} and handles the multipart
-     *     form data construction and response parsing
+     *
      */
     public static String uploadAndGetId(String username, String accessKey, String filePath)
             throws IOException {

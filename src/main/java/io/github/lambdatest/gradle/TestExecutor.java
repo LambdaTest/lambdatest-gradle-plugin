@@ -53,11 +53,10 @@ public class TestExecutor {
     /**
      * Executes the tests on LambdaTest with the specified parameters.
      *
+     * <p>Implementation Note: This method constructs the test capabilities and sends them to either {@link Constants#BUILD_URL} or {@link Constants#FLUTTER_BUILD_URL} based on whether it's a Flutter or standard application.</p>
+     *
      * @param params Map of additional test execution parameters
      * @throws IOException if there's an error in communication with the LambdaTest API
-     * @implNote This method constructs the test capabilities and sends them to either {@link
-     *     Constants#BUILD_URL} or {@link Constants#FLUTTER_BUILD_URL} based on whether it's a
-     *     Flutter or standard application
      */
     public void executeTests(Map<String, String> params) throws IOException {
         try {

@@ -50,10 +50,8 @@ public class LambdaTestTask extends DefaultTask {
      * Executes the LambdaTest task, which includes uploading the application and test suite,
      * followed by test execution on the LambdaTest platform.
      *
-     * @implNote This method handles the task execution in three main phases: 1. Asynchronous upload
-     *     of the application using {@link AppUploader#uploadAppAsync()} 2. Asynchronous upload of
-     *     the test suite using {@link TestSuiteUploader#uploadTestSuiteAsync()} 3. Test execution
-     *     with {@link TestExecutor#executeTests(Map)}
+     * <p>Implementation Note:This method handles the task execution in three main phases: 1. Asynchronous upload of the application using {@link AppUploader#uploadAppAsync()} 2. Asynchronous upload of the test suite using {@link TestSuiteUploader#uploadTestSuiteAsync()} 3. Test execution with {@link TestExecutor#executeTests(Map)}</p>
+     *
      * @throws RuntimeException if any upload or test execution fails
      */
     @TaskAction
