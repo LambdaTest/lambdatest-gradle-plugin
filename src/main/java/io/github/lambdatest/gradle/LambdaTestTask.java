@@ -12,11 +12,12 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
 /**
- * Main task class for the LambdaTest Gradle plugin that handles test execution on the LambdaTest platform.
- * This task manages the upload of applications and test suites, followed by test execution with specified configurations.
+ * Main task class for the LambdaTest Gradle plugin that handles test execution on the LambdaTest
+ * platform. This task manages the upload of applications and test suites, followed by test
+ * execution with specified configurations.
  *
- * <p>This task coordinates between {@link AppUploader}, {@link TestSuiteUploader}, and {@link TestExecutor}
- * to manage the complete test execution lifecycle.</p>
+ * <p>This task coordinates between {@link AppUploader}, {@link TestSuiteUploader}, and {@link
+ * TestExecutor} to manage the complete test execution lifecycle.
  */
 public class LambdaTestTask extends DefaultTask {
 
@@ -49,11 +50,10 @@ public class LambdaTestTask extends DefaultTask {
      * Executes the LambdaTest task, which includes uploading the application and test suite,
      * followed by test execution on the LambdaTest platform.
      *
-     * @implNote This method handles the task execution in three main phases:
-     * 1. Asynchronous upload of the application using {@link AppUploader#uploadAppAsync()}
-     * 2. Asynchronous upload of the test suite using {@link TestSuiteUploader#uploadTestSuiteAsync()}
-     * 3. Test execution with {@link TestExecutor#executeTests(Map)}
-     *
+     * @implNote This method handles the task execution in three main phases: 1. Asynchronous upload
+     *     of the application using {@link AppUploader#uploadAppAsync()} 2. Asynchronous upload of
+     *     the test suite using {@link TestSuiteUploader#uploadTestSuiteAsync()} 3. Test execution
+     *     with {@link TestExecutor#executeTests(Map)}
      * @throws RuntimeException if any upload or test execution fails
      */
     @TaskAction

@@ -6,8 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Handles the asynchronous upload of test suite files to the LambdaTest platform.
- * This class manages the upload process and returns the test suite ID for test execution.
+ * Handles the asynchronous upload of test suite files to the LambdaTest platform. This class
+ * manages the upload process and returns the test suite ID for test execution.
  */
 public class TestSuiteUploader {
 
@@ -34,8 +34,8 @@ public class TestSuiteUploader {
      * Uploads the test suite file asynchronously to LambdaTest.
      *
      * @return A CompletableFuture that resolves to the uploaded test suite's ID
-     * @implNote Uses CompletableFuture to perform the upload asynchronously, allowing
-     *          parallel processing of other tasks
+     * @implNote Uses CompletableFuture to perform the upload asynchronously, allowing parallel
+     *     processing of other tasks
      */
     public CompletableFuture<String> uploadTestSuiteAsync() {
         return CompletableFuture.supplyAsync(

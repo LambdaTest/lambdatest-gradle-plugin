@@ -4,8 +4,8 @@ import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
 /**
- * The main plugin class that integrates LambdaTest functionality into the Gradle build system.
- * This plugin adds the 'runLambdaTest' task to the project's task container.
+ * The main plugin class that integrates LambdaTest functionality into the Gradle build system. This
+ * plugin adds the 'runLambdaTest' task to the project's task container.
  */
 public class LambdaTestPlugin implements Plugin<Project> {
 

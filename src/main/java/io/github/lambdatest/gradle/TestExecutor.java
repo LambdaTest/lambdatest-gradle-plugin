@@ -10,10 +10,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Manages the execution of tests on the LambdaTest platform.
- * This class handles the test execution configuration and communication with the LambdaTest API.
+ * Manages the execution of tests on the LambdaTest platform. This class handles the test execution
+ * configuration and communication with the LambdaTest API.
  *
- * <p>Uses endpoints defined in {@link Constants} for API communication.</p>
+ * <p>Uses endpoints defined in {@link Constants} for API communication.
  */
 public class TestExecutor {
     private static final Logger logger = LogManager.getLogger(TestExecutor.class);
@@ -55,9 +55,9 @@ public class TestExecutor {
      *
      * @param params Map of additional test execution parameters
      * @throws IOException if there's an error in communication with the LambdaTest API
-     * @implNote This method constructs the test capabilities and sends them to either
-     *          {@link Constants#BUILD_URL} or {@link Constants#FLUTTER_BUILD_URL}
-     *          based on whether it's a Flutter or standard application
+     * @implNote This method constructs the test capabilities and sends them to either {@link
+     *     Constants#BUILD_URL} or {@link Constants#FLUTTER_BUILD_URL} based on whether it's a
+     *     Flutter or standard application
      */
     public void executeTests(Map<String, String> params) throws IOException {
         try {

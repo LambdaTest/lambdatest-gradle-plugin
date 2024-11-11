@@ -6,10 +6,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Handles the asynchronous upload of application files to the LambdaTest platform.
- * This class manages the upload process and returns the application ID for test execution.
+ * Handles the asynchronous upload of application files to the LambdaTest platform. This class
+ * manages the upload process and returns the application ID for test execution.
  *
- * <p>Uses {@link UploaderUtil#uploadAndGetId(String, String, String)} for the actual file upload process.</p>
+ * <p>Uses {@link UploaderUtil#uploadAndGetId(String, String, String)} for the actual file upload
+ * process.
  */
 public class AppUploader {
 
@@ -40,8 +41,8 @@ public class AppUploader {
      * Uploads the application file asynchronously to LambdaTest.
      *
      * @return A CompletableFuture that resolves to the uploaded application's ID
-     * @implNote Uses CompletableFuture to perform the upload asynchronously, allowing
-     *          parallel processing of other tasks
+     * @implNote Uses CompletableFuture to perform the upload asynchronously, allowing parallel
+     *     processing of other tasks
      */
     public CompletableFuture<String> uploadAppAsync() {
         return CompletableFuture.supplyAsync(
