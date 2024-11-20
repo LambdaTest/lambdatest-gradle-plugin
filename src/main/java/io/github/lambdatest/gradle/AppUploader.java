@@ -40,9 +40,8 @@ public class AppUploader {
     /**
      * Uploads the application file asynchronously to LambdaTest.
      *
-     * <p>Implementation Note: Uses CompletableFuture to perform the upload asynchronously, allowing
-     * parallel processing of other tasks.
-     *
+     * @implNote Uses CompletableFuture to perform the upload asynchronously, allowing parallel
+     *     processing of other tasks.
      * @return A CompletableFuture that resolves to the uploaded application's ID
      */
     public CompletableFuture<String> uploadAppAsync() {

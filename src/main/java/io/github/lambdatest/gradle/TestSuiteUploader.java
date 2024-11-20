@@ -33,9 +33,8 @@ public class TestSuiteUploader {
     /**
      * Uploads the test suite file asynchronously to LambdaTest.
      *
-     * <p>Implementation Note: Uses CompletableFuture to perform the upload asynchronously, allowing
-     * parallel processing of other tasks.
-     *
+     * @implNote Uses CompletableFuture to perform the upload asynchronously, allowing parallel
+     *     processing of other tasks.
      * @return A CompletableFuture that resolves to the uploaded test suite's ID
      */
     public CompletableFuture<String> uploadTestSuiteAsync() {

@@ -29,9 +29,8 @@ public final class UploaderUtil {
     /**
      * Uploads a file to LambdaTest and returns its ID.
      *
-     * <p>Implementation Note: This method sends the file to {@link Constants#API_URL} and handles
-     * the multipart form data construction and response parsing.
-     *
+     * @implNote This method sends the file to {@link Constants#API_URL} and handles the multipart
+     *     form data construction and response parsing.
      * @param username The LambdaTest account username
      * @param accessKey The LambdaTest account access key
      * @param filePath The path to the file to be uploaded
