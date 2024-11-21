@@ -41,3 +41,6 @@ spotless {
     }
 }
 
+javadoc {
+    options.tags = [ "implNote:a:Implementation Note:" ]
+}
