@@ -52,7 +52,9 @@ public class LambdaUploaderTask extends DefaultTask {
 
             if (testSuiteIdFuture != null) {
                 testSuiteId = testSuiteIdFuture.join();
-                logger.lifecycle("\u001B[32mTest suite uploaded successfully with ID: {}\u001B[0m", testSuiteId);
+                logger.lifecycle(
+                        "\u001B[32mTest suite uploaded successfully with ID: {}\u001B[0m",
+                        testSuiteId);
             }
         } catch (CompletionException e) {
             logger.error("Failed to execute LambdaTest APK Uploader task : {}", e);
