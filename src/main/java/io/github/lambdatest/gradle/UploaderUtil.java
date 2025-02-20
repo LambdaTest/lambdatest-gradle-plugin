@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.Credentials;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -39,8 +41,11 @@ public final class UploaderUtil {
      */
     public static String uploadAndGetId(String username, String accessKey, String filePath)
             throws IOException {
-
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+        .connectTimeout(1, TimeUnit.MINUTES)  // Increase connection timeout
+        .readTimeout(0, TimeUnit.MILLISECONDS)     // Increase read timeout
+        .writeTimeout(0, TimeUnit.MILLISECONDS)    // Increase write timeout
+        .build();
 
         MediaType mediaType = MediaType.parse("application/octet-stream");
         RequestBody body =
