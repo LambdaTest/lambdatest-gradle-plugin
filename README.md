@@ -27,6 +27,8 @@ apply plugin: "io.github.lambdatest.gradle"
 
 ```
 ### Add LambdaTest parameters to `build.gradle`:
+#### Configuration for running test and optionally uploading your apps
+
 ```
 runLambdaTest {
     username = 'yourLambdaTestUsername'
@@ -39,6 +41,19 @@ runLambdaTest {
     testSuiteId = "lt//1223444" //provide this only if you have already uploaded the app
 }
 ```
+
+#### Configuration for only uploading your apps
+
+```
+uploadApkToLambdaTest {
+    username = 'yourLambdaTestUsername'
+    accessKey = 'yourLambdaTestAccessKey'
+    appFilePath = 'pathToYourAppFile'
+    testSuiteFilePath = 'pathToYourTestSuite'
+}
+```
+
+
 ### Supported Capabilities:
 
 The following capabilities are supported:
@@ -55,10 +70,17 @@ The following capabilities are supported:
 - `tunnel`, `tunnelName`: Set tunnel as true and provide the tunnelName such as NewTunnel as needed if you are running a tunnel.
 
 ## Execution:
-To run the plugin added in the project's `build.gradle`:
+#### To run the test with the plugin added in the project's `build.gradle`:
 ```
 ./gradlew runLambdaTest
 ```
+
+#### If you just want to upload apks and not run actual tests:
+
+```
+./gradlew uploadApkToLambdaTest
+```
+
 
 ## About LambdaTest
 
