@@ -58,8 +58,8 @@ uploadApkToLambdaTest {
 
 The following capabilities are supported:
 
-- `app`: Enter the app id generated while uploading the app. Example:lt://APP123456789123456789
-- `testSuite`: Enter the test suite id generated while uploading the test suite. Example: lt://APP123456789123456789
+- `appId`: Enter the app id generated while uploading the app. Example:lt://APP123456789123456789
+- `testSuiteId`: Enter the test suite id generated while uploading the test suite. Example: lt://APP123456789123456789
 - `device`: Enter the name and os version of the device in “DeviceName-OSVersion” format. Example: Pixel 3 XL-9 or Galaxy S21 Ultra 5G-11.
 - `video`: Generate video for all the tests that have run. Example: true.
 - `queueTimeout`: Enter the time in seconds after which you want your build to timeout from queue. Example: 300.
@@ -68,6 +68,10 @@ The following capabilities are supported:
 - `build`: Set the name of the Espresso test build. Example: My Espresso Build.
 - `geoLocation`: Set the geolocation country code if you want to enable the same in your test. Example - FR.
 - `tunnel`, `tunnelName`: Set tunnel as true and provide the tunnelName such as NewTunnel as needed if you are running a tunnel.
+
+- `appFilePath` : Path of your app file (this will be uploaded to LambdaTest)
+
+- `testSuiteFilePath` : Path of your test suite apk file (this will be uploaded to LambdaTest)
 
 ## Execution:
 #### To run the test with the plugin added in the project's `build.gradle`:
