@@ -35,10 +35,12 @@ public final class UploaderUtil {
      * @param username The LambdaTest account username
      * @param accessKey The LambdaTest account access key
      * @param filePath The path to the file to be uploaded
+     * @param isVirtualDevice Boolean indicating if the device is virtual
      * @return The ID of the uploaded file
      * @throws IOException if there's an error during file upload or response parsing
      */
-    public static String uploadAndGetId(String username, String accessKey, String filePath)
+    public static String uploadAndGetId(
+            String username, String accessKey, String filePath, Boolean isVirtualDevice)
             throws IOException {
         OkHttpClient client =
                 new OkHttpClient.Builder()
@@ -48,15 +50,20 @@ public final class UploaderUtil {
                         .build();
 
         MediaType mediaType = MediaType.parse("application/octet-stream");
-        RequestBody body =
+        MultipartBody.Builder builder =
                 new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
                         .addFormDataPart(
                                 "appFile",
                                 filePath,
                                 RequestBody.create(new File(filePath), mediaType))
-                        .addFormDataPart("type", "espresso-android")
-                        .build();
+                        .addFormDataPart("type", "espresso-android");
+
+        if (isVirtualDevice) {
+            builder.addFormDataPart("isVirtualDevice", String.valueOf(isVirtualDevice));
+        }
+
+        RequestBody body = builder.build();
         Request request =
                 new Request.Builder()
                         .url(Constants.API_URL)

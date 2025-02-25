@@ -24,6 +24,7 @@ public class TestExecutor {
     private String testSuiteId;
     private List<String> device;
     private Boolean isFlutter;
+    private Boolean isVirtualDevice;
 
     /**
      * Creates a new TestExecutor with the specified configuration.
@@ -41,13 +42,15 @@ public class TestExecutor {
             String appId,
             String testSuiteId,
             List<String> device,
-            Boolean isFlutter) {
+            Boolean isFlutter,
+            Boolean isVirtualDevice) {
         this.username = username;
         this.accessKey = accessKey;
         this.appId = appId;
         this.testSuiteId = testSuiteId;
         this.device = device;
         this.isFlutter = isFlutter;
+        this.isVirtualDevice = isVirtualDevice;
     }
 
     /**
@@ -70,6 +73,9 @@ public class TestExecutor {
             capabilities.put("app", appId);
             capabilities.put("testSuite", testSuiteId);
             capabilities.put("device", device);
+            if (isVirtualDevice) {
+                capabilities.put("isVirtualDevice", isVirtualDevice);
+            }
             capabilities.putAll(params);
 
             logger.info("Capabilities: {}", capabilities);

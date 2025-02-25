@@ -45,6 +45,7 @@ public class LambdaTestTask extends DefaultTask {
     private String appId;
     private String testSuiteId;
     private Integer queueTimeout;
+    private Boolean isVirtualDevice = false;
 
     /**
      * Executes the LambdaTest task, which includes uploading the application and test suite,
@@ -66,14 +67,15 @@ public class LambdaTestTask extends DefaultTask {
 
         if (appId == null && appFilePath != null) {
             logger.info("Uploading app...");
-            AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
+            AppUploader appUploader =
+                    new AppUploader(username, accessKey, appFilePath, isVirtualDevice);
             appIdFuture = appUploader.uploadAppAsync();
         }
 
         if (testSuiteId == null && testSuiteFilePath != null) {
             logger.info("Uploading test suite...");
             TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(username, accessKey, testSuiteFilePath);
+                    new TestSuiteUploader(username, accessKey, testSuiteFilePath, isVirtualDevice);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
 
@@ -96,7 +98,14 @@ public class LambdaTestTask extends DefaultTask {
         // Execute tests
         logger.info("Executing tests...");
         TestExecutor testExecutor =
-                new TestExecutor(username, accessKey, appId, testSuiteId, device, isFlutter);
+                new TestExecutor(
+                        username,
+                        accessKey,
+                        appId,
+                        testSuiteId,
+                        device,
+                        isFlutter,
+                        isVirtualDevice);
         Map<String, String> params = new HashMap<>();
 
         if (build != null) params.put("build", build);
@@ -216,5 +225,14 @@ public class LambdaTestTask extends DefaultTask {
         if (testSuiteId != null && !testSuiteId.trim().isEmpty()) {
             this.testSuiteId = testSuiteId;
         }
+    }
+
+    /**
+     * Sets whether the device used for the test execution is a virtual device.
+     *
+     * @param isVirtualDevice true if the device is a virtual device, false otherwise
+     */
+    public void setIsVirtualDevice(Boolean isVirtualDevice) {
+        this.isVirtualDevice = (isVirtualDevice != null && isVirtualDevice);
     }
 }

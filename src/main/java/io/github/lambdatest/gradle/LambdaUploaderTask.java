@@ -21,6 +21,7 @@ public class LambdaUploaderTask extends DefaultTask {
     private String accessKey;
     private String appFilePath;
     private String testSuiteFilePath;
+    private Boolean isVirtualDevice = false;
 
     @TaskAction
     public void uploadApkToLambdaTest() {
@@ -33,14 +34,15 @@ public class LambdaUploaderTask extends DefaultTask {
 
         if (appFilePath != null) {
             logger.lifecycle("Uploading app ...");
-            AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
+            AppUploader appUploader =
+                    new AppUploader(username, accessKey, appFilePath, isVirtualDevice);
             appIdFuture = appUploader.uploadAppAsync();
         }
 
         if (testSuiteFilePath != null) {
             logger.lifecycle("Uploading test suite ...");
             TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(username, accessKey, testSuiteFilePath);
+                    new TestSuiteUploader(username, accessKey, testSuiteFilePath, isVirtualDevice);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
 
@@ -79,5 +81,9 @@ public class LambdaUploaderTask extends DefaultTask {
 
     public void setTestSuiteFilePath(String testSuiteFilePath) {
         this.testSuiteFilePath = testSuiteFilePath;
+    }
+
+    public void setIsVirtualDevice(Boolean isVirtualDevice) {
+        this.isVirtualDevice = (isVirtualDevice != null && isVirtualDevice);
     }
 }
