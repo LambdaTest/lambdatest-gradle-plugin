@@ -16,6 +16,7 @@ public class TestSuiteUploader {
     private String username;
     private String accessKey;
     private String testSuiteFilePath;
+    private Boolean isVirtualDevice;
 
     /**
      * Creates a new TestSuiteUploader instance with the specified credentials and file path.
@@ -23,11 +24,14 @@ public class TestSuiteUploader {
      * @param username The LambdaTest account username
      * @param accessKey The LambdaTest account access key
      * @param testSuiteFilePath The path to the test suite file to be uploaded
+     * @param isVirtualDevice Boolean indicating if upload is to a virtual device
      */
-    public TestSuiteUploader(String username, String accessKey, String testSuiteFilePath) {
+    public TestSuiteUploader(
+            String username, String accessKey, String testSuiteFilePath, Boolean isVirtualDevice) {
         this.username = username;
         this.accessKey = accessKey;
         this.testSuiteFilePath = testSuiteFilePath;
+        this.isVirtualDevice = isVirtualDevice;
     }
 
     /**
@@ -42,7 +46,8 @@ public class TestSuiteUploader {
                 () -> {
                     try {
                         String testSuiteId =
-                                UploaderUtil.uploadAndGetId(username, accessKey, testSuiteFilePath);
+                                UploaderUtil.uploadAndGetId(
+                                        username, accessKey, testSuiteFilePath, isVirtualDevice);
                         logger.info("Uploaded test suite ID: {}", testSuiteId);
                         return testSuiteId;
                     } catch (IOException e) {
