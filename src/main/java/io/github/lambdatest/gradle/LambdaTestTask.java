@@ -45,6 +45,7 @@ public class LambdaTestTask extends DefaultTask {
     private String appId;
     private String testSuiteId;
     private Integer queueTimeout;
+    private Boolean showUploadProgress;
 
     /**
      * Executes the LambdaTest task, which includes uploading the application and test suite,
@@ -64,16 +65,19 @@ public class LambdaTestTask extends DefaultTask {
         CompletableFuture<String> appIdFuture = null;
         CompletableFuture<String> testSuiteIdFuture = null;
 
+        boolean progressEnabled = showUploadProgress != null && showUploadProgress;
+
         if (appId == null && appFilePath != null) {
             logger.info("Uploading app...");
-            AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
+            AppUploader appUploader =
+                    new AppUploader(username, accessKey, appFilePath, progressEnabled);
             appIdFuture = appUploader.uploadAppAsync();
         }
 
         if (testSuiteId == null && testSuiteFilePath != null) {
             logger.info("Uploading test suite...");
             TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(username, accessKey, testSuiteFilePath);
+                    new TestSuiteUploader(username, accessKey, testSuiteFilePath, progressEnabled);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
 
@@ -216,5 +220,9 @@ public class LambdaTestTask extends DefaultTask {
         if (testSuiteId != null && !testSuiteId.trim().isEmpty()) {
             this.testSuiteId = testSuiteId;
         }
+    }
+
+    public void setShowUploadProgress(Boolean showUploadProgress) {
+        this.showUploadProgress = showUploadProgress;
     }
 }

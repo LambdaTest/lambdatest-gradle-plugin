@@ -21,6 +21,7 @@ public class LambdaUploaderTask extends DefaultTask {
     private String accessKey;
     private String appFilePath;
     private String testSuiteFilePath;
+    private Boolean showUploadProgress;
 
     @TaskAction
     public void uploadApkToLambdaTest() {
@@ -31,16 +32,19 @@ public class LambdaUploaderTask extends DefaultTask {
         CompletableFuture<String> testSuiteIdFuture = null;
         logger.lifecycle("Starting LambdaTest APK Uploader task...");
 
+        boolean progressEnabled = showUploadProgress != null && showUploadProgress;
+
         if (appFilePath != null) {
             logger.lifecycle("Uploading app ...");
-            AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
+            AppUploader appUploader =
+                    new AppUploader(username, accessKey, appFilePath, progressEnabled);
             appIdFuture = appUploader.uploadAppAsync();
         }
 
         if (testSuiteFilePath != null) {
             logger.lifecycle("Uploading test suite ...");
             TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(username, accessKey, testSuiteFilePath);
+                    new TestSuiteUploader(username, accessKey, testSuiteFilePath, progressEnabled);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
 
@@ -79,5 +83,9 @@ public class LambdaUploaderTask extends DefaultTask {
 
     public void setTestSuiteFilePath(String testSuiteFilePath) {
         this.testSuiteFilePath = testSuiteFilePath;
+    }
+
+    public void setShowUploadProgress(Boolean showUploadProgress) {
+        this.showUploadProgress = showUploadProgress;
     }
 }
