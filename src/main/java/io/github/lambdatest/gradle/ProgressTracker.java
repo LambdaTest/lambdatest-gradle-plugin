@@ -36,17 +36,12 @@ public class ProgressTracker {
      * Updates the progress display for a specific upload.
      *
      * @param uploadId The unique identifier for the upload
-     * @param fileName The name of the file being uploaded
      * @param percentage The upload percentage (0-100)
      * @param bytesWritten Bytes uploaded so far
      * @param totalBytes Total bytes to upload
      */
     public static void updateProgress(
-            String uploadId,
-            String fileName,
-            float percentage,
-            long bytesWritten,
-            long totalBytes) {
+            String uploadId, float percentage, long bytesWritten, long totalBytes) {
         synchronized (consoleLock) {
             // Register upload if not already registered (reserves a line)
             int lineNumber = registerUpload(uploadId);

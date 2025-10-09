@@ -98,30 +98,16 @@ public class ProgressRequestBody extends RequestBody {
      * ProgressTracker for clean, fixed-line output.
      *
      * @param uploadId The unique identifier for this upload (e.g., "App", "Test Suite")
-     * @param fileName The name of the file being uploaded
      * @return A ProgressCallback that logs to console
      */
-    public static ProgressCallback createConsoleCallback(String uploadId, String fileName) {
+    public static ProgressCallback createConsoleCallback(String uploadId) {
         return (bytesWritten, totalBytes, percentage) -> {
-            ProgressTracker.updateProgress(
-                    uploadId, fileName, percentage, bytesWritten, totalBytes);
+            ProgressTracker.updateProgress(uploadId, percentage, bytesWritten, totalBytes);
 
             if (percentage >= 100.0f) {
                 ProgressTracker.completeUpload(uploadId);
             }
         };
-    }
-
-    /**
-     * Creates a console-based progress callback (legacy version for backward compatibility).
-     *
-     * @param fileName The name of the file being uploaded
-     * @return A ProgressCallback that logs to console
-     * @deprecated Use {@link #createConsoleCallback(String, String)} instead
-     */
-    @Deprecated
-    public static ProgressCallback createConsoleCallback(String fileName) {
-        return createConsoleCallback("Upload", fileName);
     }
 
     /**
