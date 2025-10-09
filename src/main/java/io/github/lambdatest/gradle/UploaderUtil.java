@@ -108,7 +108,7 @@ public final class UploaderUtil {
             String uploadId = progressPrefix != null ? progressPrefix : "Upload";
             ProgressRequestBody.ProgressCallback callback =
                     ProgressRequestBody.createConsoleCallback(uploadId, fileName);
-            body = new ProgressRequestBody(body, file, callback);
+            body = new ProgressRequestBody(body, callback);
         }
         Request request =
                 new Request.Builder()

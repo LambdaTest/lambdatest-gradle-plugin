@@ -55,7 +55,7 @@ public class ProgressTracker {
             // Move cursor to the appropriate line
             if (lineNumber < totalLines - 1) {
                 // Not the last line - need to move up
-                System.out.print(String.format("\u001B[%dA", totalLines - lineNumber - 1));
+                System.out.printf("\u001B[%dA", totalLines - lineNumber - 1);
             }
 
             // Clear the line and print progress
@@ -70,7 +70,7 @@ public class ProgressTracker {
 
             // Move cursor back to bottom
             if (lineNumber < totalLines - 1) {
-                System.out.print(String.format("\u001B[%dB", totalLines - lineNumber - 1));
+                System.out.printf("\u001B[%dB", totalLines - lineNumber - 1);
             }
 
             System.out.flush();
@@ -119,7 +119,7 @@ public class ProgressTracker {
             int totalLines = uploadLines.size();
             if (totalLines > 0) {
                 // Move to the first line
-                System.out.print(String.format("\u001B[%dA", totalLines - 1));
+                System.out.printf("\u001B[%dA", totalLines - 1);
                 // Clear all progress lines
                 for (int i = 0; i < totalLines; i++) {
                     System.out.print("\r\u001B[K"); // Clear current line
@@ -128,7 +128,7 @@ public class ProgressTracker {
                     }
                 }
                 // Move back to start position
-                System.out.print(String.format("\u001B[%dA", totalLines - 1));
+                System.out.printf("\u001B[%dA", totalLines - 1);
                 System.out.flush();
             }
             reset();
@@ -140,26 +140,6 @@ public class ProgressTracker {
         synchronized (consoleLock) {
             uploadLines.clear();
             nextLineNumber.set(0);
-        }
-    }
-
-    /**
-     * Initializes the display with placeholder lines for all uploads.
-     *
-     * @param uploadIds Array of upload IDs to register
-     */
-    public static void initializeDisplay(String... uploadIds) {
-        synchronized (consoleLock) {
-            reset();
-            for (String uploadId : uploadIds) {
-                registerUpload(uploadId);
-                System.out.println(); // Reserve a line for each upload
-            }
-            // Move cursor back to the beginning
-            if (uploadIds.length > 0) {
-                System.out.print(String.format("\u001B[%dA", uploadIds.length));
-                System.out.flush();
-            }
         }
     }
 }

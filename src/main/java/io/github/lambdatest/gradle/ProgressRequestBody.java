@@ -1,6 +1,5 @@
 package io.github.lambdatest.gradle;
 
-import java.io.File;
 import java.io.IOException;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -9,6 +8,7 @@ import okio.BufferedSink;
 import okio.ForwardingSink;
 import okio.Okio;
 import okio.Sink;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A RequestBody wrapper that tracks upload progress and displays it in the console. This class uses
@@ -17,7 +17,6 @@ import okio.Sink;
 public class ProgressRequestBody extends RequestBody {
 
     private final RequestBody delegate;
-    private final File file;
     private final ProgressCallback progressCallback;
 
     /** Interface for progress callbacks. */
@@ -29,12 +28,10 @@ public class ProgressRequestBody extends RequestBody {
      * Creates a new ProgressRequestBody that wraps the given RequestBody.
      *
      * @param delegate The original RequestBody to wrap
-     * @param file The file being uploaded (used to get total size)
      * @param progressCallback Callback to receive progress updates
      */
-    public ProgressRequestBody(RequestBody delegate, File file, ProgressCallback progressCallback) {
+    public ProgressRequestBody(RequestBody delegate, ProgressCallback progressCallback) {
         this.delegate = delegate;
-        this.file = file;
         this.progressCallback = progressCallback;
     }
 
@@ -49,7 +46,7 @@ public class ProgressRequestBody extends RequestBody {
     }
 
     @Override
-    public void writeTo(BufferedSink sink) throws IOException {
+    public void writeTo(@NotNull BufferedSink sink) throws IOException {
         long contentLength = contentLength();
         ProgressSink progressSink = new ProgressSink(sink, contentLength, progressCallback);
         BufferedSink bufferedSink = Okio.buffer(progressSink);
@@ -75,7 +72,7 @@ public class ProgressRequestBody extends RequestBody {
         }
 
         @Override
-        public void write(Buffer source, long byteCount) throws IOException {
+        public void write(@NotNull Buffer source, long byteCount) throws IOException {
             super.write(source, byteCount);
             bytesWritten += byteCount;
 
