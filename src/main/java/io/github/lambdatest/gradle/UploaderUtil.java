@@ -105,10 +105,9 @@ public final class UploaderUtil {
         // Wrap the entire multipart body with progress tracking if requested
         if (showProgress) {
             String fileName = file.getName();
-            String displayName =
-                    progressPrefix != null ? progressPrefix + " - " + fileName : fileName;
+            String uploadId = progressPrefix != null ? progressPrefix : "Upload";
             ProgressRequestBody.ProgressCallback callback =
-                    ProgressRequestBody.createConsoleCallback(displayName);
+                    ProgressRequestBody.createConsoleCallback(uploadId, fileName);
             body = new ProgressRequestBody(body, file, callback);
         }
         Request request =

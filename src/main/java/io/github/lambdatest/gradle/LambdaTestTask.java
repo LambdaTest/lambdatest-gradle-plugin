@@ -59,23 +59,29 @@ public class LambdaTestTask extends DefaultTask {
      */
     @TaskAction
     public void runLambdaTest() {
-        logger.info("Starting LambdaTest task...");
+        boolean progressEnabled = showUploadProgress != null && showUploadProgress;
+
+        if (!progressEnabled) {
+            logger.info("Starting LambdaTest task...");
+        }
 
         // Upload app
         CompletableFuture<String> appIdFuture = null;
         CompletableFuture<String> testSuiteIdFuture = null;
 
-        boolean progressEnabled = showUploadProgress != null && showUploadProgress;
-
         if (appId == null && appFilePath != null) {
-            logger.info("Uploading app...");
+            if (!progressEnabled) {
+                logger.info("Uploading app...");
+            }
             AppUploader appUploader =
                     new AppUploader(username, accessKey, appFilePath, progressEnabled);
             appIdFuture = appUploader.uploadAppAsync();
         }
 
         if (testSuiteId == null && testSuiteFilePath != null) {
-            logger.info("Uploading test suite...");
+            if (!progressEnabled) {
+                logger.info("Uploading test suite...");
+            }
             TestSuiteUploader testSuiteUploader =
                     new TestSuiteUploader(username, accessKey, testSuiteFilePath, progressEnabled);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
@@ -85,14 +91,34 @@ public class LambdaTestTask extends DefaultTask {
         try {
             if (appIdFuture != null) {
                 appId = appIdFuture.join();
-                logger.info("App uploaded successfully with ID: {}", appId);
+                if (!progressEnabled) {
+                    logger.info("App uploaded successfully with ID: {}", appId);
+                }
             }
 
             if (testSuiteIdFuture != null) {
                 testSuiteId = testSuiteIdFuture.join();
-                logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
+                if (!progressEnabled) {
+                    logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
+                }
+            }
+
+            // Clear progress display if enabled
+            if (progressEnabled) {
+                ProgressTracker.cleanup();
+                // Show success messages after progress cleanup
+                if (appIdFuture != null) {
+                    logger.info("App uploaded successfully with ID: {}", appId);
+                }
+                if (testSuiteIdFuture != null) {
+                    logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
+                }
             }
         } catch (CompletionException e) {
+            // Cleanup progress display on error
+            if (progressEnabled) {
+                ProgressTracker.cleanup();
+            }
             logger.error("Failed to execute tasks: {}", e);
             throw new RuntimeException(e);
         }

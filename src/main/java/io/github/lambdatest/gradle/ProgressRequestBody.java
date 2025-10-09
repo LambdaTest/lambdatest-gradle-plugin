@@ -97,22 +97,34 @@ public class ProgressRequestBody extends RequestBody {
     }
 
     /**
-     * Creates a console-based progress callback that displays upload progress.
+     * Creates a console-based progress callback that displays upload progress using the
+     * ProgressTracker for clean, fixed-line output.
      *
+     * @param uploadId The unique identifier for this upload (e.g., "App", "Test Suite")
      * @param fileName The name of the file being uploaded
      * @return A ProgressCallback that logs to console
      */
-    public static ProgressCallback createConsoleCallback(String fileName) {
+    public static ProgressCallback createConsoleCallback(String uploadId, String fileName) {
         return (bytesWritten, totalBytes, percentage) -> {
-            String formattedBytes = formatBytes(bytesWritten);
-            String formattedTotal = formatBytes(totalBytes);
+            ProgressTracker.updateProgress(
+                    uploadId, fileName, percentage, bytesWritten, totalBytes);
 
-            // Use println with newlines to avoid conflicts between concurrent uploads
-            System.out.printf(
-                    "\u001B[33mUploading %s: %.1f%% (%s / %s)\u001B[0m\n",
-                    fileName, percentage, formattedBytes, formattedTotal);
-            System.out.flush(); // Force immediate output to bypass buffering
+            if (percentage >= 100.0f) {
+                ProgressTracker.completeUpload(uploadId);
+            }
         };
+    }
+
+    /**
+     * Creates a console-based progress callback (legacy version for backward compatibility).
+     *
+     * @param fileName The name of the file being uploaded
+     * @return A ProgressCallback that logs to console
+     * @deprecated Use {@link #createConsoleCallback(String, String)} instead
+     */
+    @Deprecated
+    public static ProgressCallback createConsoleCallback(String fileName) {
+        return createConsoleCallback("Upload", fileName);
     }
 
     /**
