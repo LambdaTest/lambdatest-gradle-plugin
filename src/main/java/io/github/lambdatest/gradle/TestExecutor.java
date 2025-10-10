@@ -76,8 +76,8 @@ public class TestExecutor {
 
             String url =
                     (isFlutter == null || !isFlutter)
-                            ? Constants.BUILD_URL
-                            : Constants.FLUTTER_BUILD_URL;
+                            ? Constants.getBuildUrl()
+                            : Constants.getFlutterBuildUrl();
             RequestBody body = RequestBody.create(gson.toJson(capabilities), mediaType);
 
             Request request =
