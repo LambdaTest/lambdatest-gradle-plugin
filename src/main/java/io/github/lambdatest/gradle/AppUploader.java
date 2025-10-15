@@ -46,6 +46,9 @@ public class AppUploader {
         if (username == null) throw new IllegalArgumentException("Username cannot be null");
         if (accessKey == null) throw new IllegalArgumentException("Access Key cannot be null");
         if (appFilePath == null) throw new IllegalArgumentException("App File Path cannot be null");
+        if (!appFilePath.toLowerCase().endsWith(".apk")) {
+            throw new IllegalArgumentException("App file must have a .apk extension");
+        }
 
         this.username = username;
         this.accessKey = accessKey;
