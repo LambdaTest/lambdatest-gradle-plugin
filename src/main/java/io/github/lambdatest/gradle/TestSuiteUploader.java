@@ -25,6 +25,14 @@ public class TestSuiteUploader {
      * @param testSuiteFilePath The path to the test suite file to be uploaded
      */
     public TestSuiteUploader(String username, String accessKey, String testSuiteFilePath) {
+        if (username == null) throw new IllegalArgumentException("Username cannot be null");
+        if (accessKey == null) throw new IllegalArgumentException("Access Key cannot be null");
+        if (testSuiteFilePath == null)
+            throw new IllegalArgumentException("Test Suite File Path cannot be null");
+        if (!testSuiteFilePath.toLowerCase().endsWith(".apk")) {
+            throw new IllegalArgumentException("Test suite file must have a .apk extension");
+        }
+
         this.username = username;
         this.accessKey = accessKey;
         this.testSuiteFilePath = testSuiteFilePath;
