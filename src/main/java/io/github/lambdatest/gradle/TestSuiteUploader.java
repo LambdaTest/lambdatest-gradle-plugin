@@ -16,6 +16,7 @@ public class TestSuiteUploader {
     private String username;
     private String accessKey;
     private String testSuiteFilePath;
+    private boolean showProgress;
 
     /**
      * Creates a new TestSuiteUploader instance with the specified credentials and file path.
@@ -25,6 +26,20 @@ public class TestSuiteUploader {
      * @param testSuiteFilePath The path to the test suite file to be uploaded
      */
     public TestSuiteUploader(String username, String accessKey, String testSuiteFilePath) {
+        this(username, accessKey, testSuiteFilePath, false);
+    }
+
+    /**
+     * Creates a new TestSuiteUploader instance with the specified credentials, file path, and
+     * progress tracking option.
+     *
+     * @param username The LambdaTest account username
+     * @param accessKey The LambdaTest account access key
+     * @param testSuiteFilePath The path to the test suite file to be uploaded
+     * @param showProgress Whether to display upload progress in the console
+     */
+    public TestSuiteUploader(
+            String username, String accessKey, String testSuiteFilePath, boolean showProgress) {
         if (username == null) throw new IllegalArgumentException("Username cannot be null");
         if (accessKey == null) throw new IllegalArgumentException("Access Key cannot be null");
         if (testSuiteFilePath == null)
@@ -36,6 +51,7 @@ public class TestSuiteUploader {
         this.username = username;
         this.accessKey = accessKey;
         this.testSuiteFilePath = testSuiteFilePath;
+        this.showProgress = showProgress;
     }
 
     /**
@@ -50,7 +66,12 @@ public class TestSuiteUploader {
                 () -> {
                     try {
                         String testSuiteId =
-                                UploaderUtil.uploadAndGetId(username, accessKey, testSuiteFilePath);
+                                UploaderUtil.uploadAndGetId(
+                                        username,
+                                        accessKey,
+                                        testSuiteFilePath,
+                                        showProgress,
+                                        "Test Suite");
                         logger.info("Uploaded test suite ID: {}", testSuiteId);
                         return testSuiteId;
                     } catch (IOException e) {

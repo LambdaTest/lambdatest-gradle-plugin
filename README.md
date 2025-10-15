@@ -39,6 +39,7 @@ runLambdaTest {
     isFlutter = true //if you are running flutter dart tests
     appId = "lt//1234343" //provide this only if you have already uploaded the app
     testSuiteId = "lt//1223444" //provide this only if you have already uploaded the app
+    showUploadProgress = true //enable upload progress tracking in console
 }
 ```
 
@@ -50,6 +51,7 @@ uploadApkToLambdaTest {
     accessKey = 'yourLambdaTestAccessKey'
     appFilePath = 'pathToYourAppFile'
     testSuiteFilePath = 'pathToYourTestSuite'
+    showUploadProgress = true //enable upload progress tracking in console
 }
 ```
 
@@ -68,6 +70,7 @@ The following capabilities are supported:
 - `build`: Set the name of the Espresso test build. Example: My Espresso Build.
 - `geoLocation`: Set the geolocation country code if you want to enable the same in your test. Example - FR.
 - `tunnel`, `tunnelName`: Set tunnel as true and provide the tunnelName such as NewTunnel as needed if you are running a tunnel.
+- `showUploadProgress`: Display real-time upload progress in the console with percentage and data transferred. Example: true.
 
 - `appFilePath` : Path of your app file (this will be uploaded to LambdaTest)
 
