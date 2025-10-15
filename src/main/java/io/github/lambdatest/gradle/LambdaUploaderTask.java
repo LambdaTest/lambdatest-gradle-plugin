@@ -66,18 +66,30 @@ public class LambdaUploaderTask extends DefaultTask {
 
     // Setter functions for the task
     public void setUsername(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
         this.username = username;
     }
 
     public void setAccessKey(String accessKey) {
+        if (accessKey == null || accessKey.trim().isEmpty()) {
+            throw new IllegalArgumentException("Access key cannot be null or empty");
+        }
         this.accessKey = accessKey;
     }
 
     public void setAppFilePath(String appFilePath) {
+        if (appFilePath == null || appFilePath.trim().isEmpty()) {
+            throw new IllegalArgumentException("App file path cannot be null or empty");
+        }
         this.appFilePath = appFilePath;
     }
 
     public void setTestSuiteFilePath(String testSuiteFilePath) {
+        if (testSuiteFilePath == null || testSuiteFilePath.trim().isEmpty()) {
+            throw new IllegalArgumentException("Test suite file path cannot be null or empty");
+        }
         this.testSuiteFilePath = testSuiteFilePath;
     }
 }
