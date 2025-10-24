@@ -20,93 +20,34 @@ class LambdaTestPluginTest {
     }
 
     @Test
-    void apply_ShouldRegisterRunLambdaTestTask() {
+    void apply_ShouldRegisterBothRequiredTasks() {
         // When
         plugin.apply(project);
 
         // Then
-        assertThat(project.getTasks().findByName("runLambdaTest")).isNotNull();
         assertThat(project.getTasks().findByName("runLambdaTest"))
+                .isNotNull()
                 .isInstanceOf(LambdaTestTask.class);
-    }
 
-    @Test
-    void apply_ShouldRegisterUploadApkToLambdaTestTask() {
-        // When
-        plugin.apply(project);
-
-        // Then
-        assertThat(project.getTasks().findByName("uploadApkToLambdaTest")).isNotNull();
         assertThat(project.getTasks().findByName("uploadApkToLambdaTest"))
+                .isNotNull()
                 .isInstanceOf(LambdaUploaderTask.class);
     }
 
     @Test
-    void apply_ShouldRegisterBothTasks() {
-        // When
+    void apply_ShouldAllowTaskConfiguration() {
+        // Given
         plugin.apply(project);
 
-        // Then
-        assertThat(project.getTasks().findByName("runLambdaTest")).isNotNull();
-        assertThat(project.getTasks().findByName("uploadApkToLambdaTest")).isNotNull();
-    }
-
-    @Test
-    void apply_ShouldCreateTasksWithCorrectTypes() {
         // When
-        plugin.apply(project);
-
-        // Then
         LambdaTestTask runTask = (LambdaTestTask) project.getTasks().findByName("runLambdaTest");
-        LambdaUploaderTask uploadTask =
-                (LambdaUploaderTask) project.getTasks().findByName("uploadApkToLambdaTest");
+        LambdaUploaderTask uploadTask = (LambdaUploaderTask) project.getTasks().findByName("uploadApkToLambdaTest");
 
+        runTask.setUsername("testUser");
+        uploadTask.setAccessKey("testKey");
+
+        // Then - Tasks should be configurable without exceptions
         assertThat(runTask).isNotNull();
         assertThat(uploadTask).isNotNull();
-    }
-
-    @Test
-    void apply_ShouldNotThrowException_WhenAppliedToProject() {
-        // When/Then - No exception should be thrown
-        plugin.apply(project);
-    }
-
-    @Test
-    void apply_ShouldAllowMultipleApplications() {
-        // When
-        plugin.apply(project);
-
-        // Then - Should not throw exception when applied again
-        // (Gradle handles duplicate task names by using existing ones)
-        assertThat(project.getTasks().findByName("runLambdaTest")).isNotNull();
-    }
-
-    @Test
-    void runLambdaTestTask_ShouldBeConfigurable() {
-        // Given
-        plugin.apply(project);
-        LambdaTestTask task = (LambdaTestTask) project.getTasks().findByName("runLambdaTest");
-
-        // When
-        task.setUsername("testUser");
-        task.setAccessKey("testKey");
-
-        // Then
-        assertThat(task).isNotNull();
-    }
-
-    @Test
-    void uploadApkToLambdaTestTask_ShouldBeConfigurable() {
-        // Given
-        plugin.apply(project);
-        LambdaUploaderTask task =
-                (LambdaUploaderTask) project.getTasks().findByName("uploadApkToLambdaTest");
-
-        // When
-        task.setUsername("testUser");
-        task.setAccessKey("testKey");
-
-        // Then
-        assertThat(task).isNotNull();
     }
 }

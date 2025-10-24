@@ -2,226 +2,85 @@ package io.github.lambdatest.gradle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import okhttp3.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Unit tests for {@link TestExecutor} class. */
 @ExtendWith(MockitoExtension.class)
 class TestExecutorTest {
 
-    private static final String TEST_USERNAME = TestConfig.getUsername();
-    private static final String TEST_ACCESS_KEY = TestConfig.getAccessKey();
-    private static final String TEST_APP_ID = TestConfig.getAppId();
-    private static final String TEST_SUITE_ID = TestConfig.getTestSuiteId();
-    private static final List<String> TEST_DEVICES = TestConfig.getDevices();
+        private static final String TEST_USERNAME = "testuser";
+        private static final String TEST_ACCESS_KEY = "test_access_key";
+        private static final String TEST_APP_ID = "lt://APP1234567890";
+        private static final String TEST_SUITE_ID = "lt://APP1234567891";
+        private static final List<String> TEST_DEVICES = Arrays.asList("Pixel 6-12", "Galaxy S21-11");
 
-    @Mock private OkHttpClient mockClient;
+        @Test
+        void constructor_ShouldCreateInstance_WithValidParameters() {
+                // Test standard Android app
+                TestExecutor executor = new TestExecutor(
+                                TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, TEST_DEVICES, false);
+                assertThat(executor).isNotNull();
 
-    @Mock private Call mockCall;
+                // Test Flutter app
+                TestExecutor flutterExecutor = new TestExecutor(
+                                TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, TEST_DEVICES, true);
+                assertThat(flutterExecutor).isNotNull();
 
-    @Mock private Response mockResponse;
+                // Test null Flutter parameter (should default to false)
+                TestExecutor nullFlutterExecutor = new TestExecutor(
+                                TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, TEST_DEVICES, null);
+                assertThat(nullFlutterExecutor).isNotNull();
+        }
 
-    @Mock private ResponseBody mockResponseBody;
+        @Test
+        void executeTests_ShouldHandleParametersCorrectly() {
+                // Given
+                TestExecutor executor = new TestExecutor(
+                                TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, TEST_DEVICES, false);
 
-    private TestExecutor testExecutor;
+                Map<String, String> params = new HashMap<>();
+                params.put("build", "Test Build");
+                params.put("video", "true");
+                params.put("deviceLog", "true");
 
-    @BeforeEach
-    void setUp() {
-        testExecutor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        false);
-    }
+                // When/Then - Should not throw during parameter setup
+                // Note: Actual HTTP execution will fail in tests, which is expected
+                assertThat(params).containsEntry("build", "Test Build");
+                assertThat(params).containsEntry("video", "true");
+                assertThat(executor).isNotNull();
+        }
 
-    @Test
-    void constructor_ShouldCreateInstance_WithValidParameters() {
-        // When
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        false);
+        @Test
+        void executeTests_ShouldHandleEmptyParameters() {
+                // Given
+                TestExecutor executor = new TestExecutor(
+                                TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, TEST_DEVICES, false);
 
-        // Then
-        assertThat(executor).isNotNull();
-    }
+                Map<String, String> emptyParams = new HashMap<>();
 
-    @Test
-    void constructor_ShouldCreateInstance_WithFlutterTrue() {
-        // When
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        true);
+                // When/Then - Should handle empty parameters without issues
+                assertThat(emptyParams).isEmpty();
+                assertThat(executor).isNotNull();
+        }
 
-        // Then
-        assertThat(executor).isNotNull();
-    }
+        @Test
+        void constructor_ShouldHandleDeviceVariations() {
+                // Single device
+                List<String> singleDevice = Arrays.asList("Pixel 6-12");
+                TestExecutor singleDeviceExecutor = new TestExecutor(
+                                TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, singleDevice, false);
+                assertThat(singleDeviceExecutor).isNotNull();
 
-    @Test
-    void executeTests_ShouldSendRequest_WithCorrectCapabilities() throws IOException {
-        // Given
-        Map<String, String> params = new HashMap<>();
-        params.put("build", "Test Build");
-        params.put("video", "true");
-
-        // Note: This test verifies that parameters can be constructed.
-        // Due to OkHttpClient being created internally, we can't fully mock it.
-        // In a real scenario, you'd need to refactor TestExecutor
-        // to accept OkHttpClient as a dependency for better testability.
-        assertThat(params).containsEntry("build", "Test Build");
-        assertThat(params).containsEntry("video", "true");
-    }
-
-    @Test
-    void executeTests_ShouldUseStandardBuildUrl_WhenIsFlutterIsFalse() throws IOException {
-        // Given
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        false);
-
-        // The actual URL used will be Constants.BUILD_URL
-        // This test validates the constructor parameter is set correctly
-        assertThat(executor).isNotNull();
-    }
-
-    @Test
-    void executeTests_ShouldUseFlutterBuildUrl_WhenIsFlutterIsTrue() throws IOException {
-        // Given
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        true);
-
-        // The actual URL used will be Constants.FLUTTER_BUILD_URL
-        // This test validates the constructor parameter is set correctly
-        assertThat(executor).isNotNull();
-    }
-
-    @Test
-    void executeTests_ShouldUseStandardBuildUrl_WhenIsFlutterIsNull() throws IOException {
-        // Given
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        null);
-
-        // When isFlutter is null, it should default to standard build URL
-        assertThat(executor).isNotNull();
-    }
-
-    @Test
-    void executeTests_ShouldIncludeAllParameters_InCapabilities() throws IOException {
-        // Given
-        Map<String, String> params = new HashMap<>();
-        params.put("build", "Test Build");
-        params.put("deviceLog", "true");
-        params.put("video", "true");
-        params.put("network", "true");
-        params.put("tunnel", "true");
-        params.put("tunnelName", "myTunnel");
-        params.put("geoLocation", "US");
-
-        // This test validates that parameters are correctly added to capabilities
-        // The actual HTTP request validation would require dependency injection
-        assertThat(params).containsEntry("build", "Test Build");
-        assertThat(params).containsEntry("deviceLog", "true");
-        assertThat(params).containsEntry("video", "true");
-    }
-
-    @Test
-    void executeTests_ShouldHandleEmptyParameters() throws IOException {
-        // Given
-        Map<String, String> params = new HashMap<>();
-
-        // This validates that empty parameters don't cause issues
-        assertThat(params).isEmpty();
-    }
-
-    @Test
-    void executeTests_ShouldIncludeAppAndTestSuiteIds() {
-        // Given
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        false);
-
-        // The executor should use these IDs in the capabilities
-        assertThat(executor).isNotNull();
-    }
-
-    @Test
-    void executeTests_ShouldIncludeDeviceList() {
-        // Given
-        List<String> devices = Arrays.asList("Device1", "Device2", "Device3");
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, devices, false);
-
-        // The executor should use these devices in the capabilities
-        assertThat(executor).isNotNull();
-    }
-
-    @Test
-    void executeTests_ShouldHandleSingleDevice() {
-        // Given
-        List<String> devices = Arrays.asList("Pixel 6-12");
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, devices, false);
-
-        // The executor should handle a single device
-        assertThat(executor).isNotNull();
-    }
-
-    @Test
-    void executeTests_ShouldSetCorrectContentType() {
-        // The executor should set Content-Type to application/json
-        // This is validated in the actual implementation
-        assertThat(testExecutor).isNotNull();
-    }
-
-    @Test
-    void executeTests_ShouldUseBasicAuthentication() {
-        // The executor should use Basic authentication with username and accessKey
-        // This is validated in the actual implementation
-        assertThat(testExecutor).isNotNull();
-    }
+                // Multiple devices
+                List<String> multipleDevices = Arrays.asList("Pixel 6-12", "Galaxy S21-11", "iPhone 13-15");
+                TestExecutor multiDeviceExecutor = new TestExecutor(
+                                TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_ID, TEST_SUITE_ID, multipleDevices, false);
+                assertThat(multiDeviceExecutor).isNotNull();
+        }
 }

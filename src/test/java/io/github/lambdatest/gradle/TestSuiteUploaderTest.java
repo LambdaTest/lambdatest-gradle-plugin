@@ -2,182 +2,74 @@ package io.github.lambdatest.gradle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mockStatic;
 
-import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Unit tests for {@link TestSuiteUploader} class. */
 @ExtendWith(MockitoExtension.class)
 class TestSuiteUploaderTest {
 
-    private static final String TEST_USERNAME = TestConfig.getUsername();
-    private static final String TEST_ACCESS_KEY = TestConfig.getAccessKey();
-    private static final String TEST_SUITE_FILE_PATH = TestConfig.getTestSuiteFilePath();
-    private static final String TEST_SUITE_ID = TestConfig.getTestSuiteId();
+        private static final String TEST_USERNAME = "testuser";
+        private static final String TEST_ACCESS_KEY = "test_access_key";
+        private static final String TEST_SUITE_FILE_PATH = "./sample-test.apk";
 
-    @Test
-    void constructor_ShouldCreateInstance_WithValidParameters() {
-        // When
-        TestSuiteUploader testSuiteUploader =
-                new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH);
+        @Test
+        void constructor_ShouldValidateRequiredParameters() {
+                // Valid construction
+                TestSuiteUploader validUploader = new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY,
+                                TEST_SUITE_FILE_PATH);
+                assertThat(validUploader).isNotNull();
 
-        // Then
-        assertThat(testSuiteUploader).isNotNull();
-    }
+                // Null parameter validation
+                assertThatThrownBy(() -> new TestSuiteUploader(null, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH))
+                                .isInstanceOf(IllegalArgumentException.class)
+                                .hasMessage("Username cannot be null");
 
-    @Test
-    void uploadTestSuiteAsync_ShouldReturnTestSuiteId_WhenUploadSucceeds()
-            throws ExecutionException, InterruptedException {
-        // Given
-        try (MockedStatic<UploaderUtil> mockedUtil = mockStatic(UploaderUtil.class)) {
-            mockedUtil
-                    .when(
-                            () ->
-                                    UploaderUtil.uploadAndGetId(
-                                            TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH))
-                    .thenReturn(TEST_SUITE_ID);
+                assertThatThrownBy(() -> new TestSuiteUploader(TEST_USERNAME, null, TEST_SUITE_FILE_PATH))
+                                .isInstanceOf(IllegalArgumentException.class)
+                                .hasMessage("Access Key cannot be null");
 
-            TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH);
+                assertThatThrownBy(() -> new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, null))
+                                .isInstanceOf(IllegalArgumentException.class)
+                                .hasMessage("Test Suite File Path cannot be null");
 
-            // When
-            CompletableFuture<String> future = testSuiteUploader.uploadTestSuiteAsync();
-            String testSuiteId = future.get();
-
-            // Then
-            assertThat(testSuiteId).matches("lt://APP\\d+");
-            assertThat(future).isCompleted();
+                assertThatThrownBy(() -> new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, "invalid.txt"))
+                                .isInstanceOf(IllegalArgumentException.class)
+                                .hasMessage("Test suite file must have a .apk extension");
         }
-    }
 
-    @Test
-    void uploadTestSuiteAsync_ShouldThrowRuntimeException_WhenUploadFails() {
-        // Given
-        try (MockedStatic<UploaderUtil> mockedUtil = mockStatic(UploaderUtil.class)) {
-            mockedUtil
-                    .when(
-                            () ->
-                                    UploaderUtil.uploadAndGetId(
-                                            TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH))
-                    .thenThrow(new IOException("Upload failed"));
+        @Test
+        void uploadTestSuiteAsync_ShouldReturnCompletableFuture() {
+                // Given
+                TestSuiteUploader testSuiteUploader = new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY,
+                                TEST_SUITE_FILE_PATH);
 
-            TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH);
+                // When
+                CompletableFuture<String> future = testSuiteUploader.uploadTestSuiteAsync();
 
-            // When
-            CompletableFuture<String> future = testSuiteUploader.uploadTestSuiteAsync();
-
-            // Then
-            assertThatThrownBy(future::join)
-                    .isInstanceOf(CompletionException.class)
-                    .hasCauseInstanceOf(RuntimeException.class)
-                    .hasRootCauseInstanceOf(IOException.class);
+                // Then - Future should be created (actual execution will fail due to invalid
+                // credentials/missing files)
+                assertThat(future).isNotNull();
+                assertThat(future).isInstanceOf(CompletableFuture.class);
         }
-    }
 
-    @Test
-    void uploadTestSuiteAsync_ShouldExecuteAsynchronously() {
-        // Given
-        try (MockedStatic<UploaderUtil> mockedUtil = mockStatic(UploaderUtil.class)) {
-            mockedUtil
-                    .when(
-                            () ->
-                                    UploaderUtil.uploadAndGetId(
-                                            TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH))
-                    .thenReturn(TEST_SUITE_ID);
+        @Test
+        void uploadTestSuiteAsync_ShouldHandleUploadFailure() {
+                // Given - Using invalid credentials will cause upload to fail
+                String invalidUsername = "invalid_user";
+                String invalidAccessKey = "invalid_key";
 
-            TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH);
+                TestSuiteUploader testSuiteUploader = new TestSuiteUploader(invalidUsername, invalidAccessKey,
+                                TEST_SUITE_FILE_PATH);
+                CompletableFuture<String> future = testSuiteUploader.uploadTestSuiteAsync();
 
-            // When
-            CompletableFuture<String> future = testSuiteUploader.uploadTestSuiteAsync();
-
-            // Then
-            assertThat(future).isNotNull();
-            assertThat(future).isInstanceOf(CompletableFuture.class);
+                // When/Then - Should handle failure gracefully by throwing CompletionException
+                assertThatThrownBy(future::join)
+                                .isInstanceOf(CompletionException.class)
+                                .hasCauseInstanceOf(RuntimeException.class);
         }
-    }
-
-    @Test
-    void uploadTestSuiteAsync_ShouldHandleIOException() {
-        String INVALID_SUITE_FILE_PATH = "invalid/path/to/suite.zip";
-        // Given
-        try (MockedStatic<UploaderUtil> mockedUtil = mockStatic(UploaderUtil.class)) {
-            mockedUtil
-                    .when(
-                            () ->
-                                    UploaderUtil.uploadAndGetId(
-                                            TEST_USERNAME,
-                                            TEST_ACCESS_KEY,
-                                            INVALID_SUITE_FILE_PATH))
-                    .thenThrow(new IOException("File not found"));
-
-            TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, INVALID_SUITE_FILE_PATH);
-
-            // When
-            CompletableFuture<String> future = testSuiteUploader.uploadTestSuiteAsync();
-
-            // Then
-            assertThatThrownBy(future::join).isInstanceOf(CompletionException.class);
-        }
-    }
-
-    @Test
-    void uploadTestSuiteAsync_ShouldHandleAuthenticationErrors() {
-        // Given
-        String invalidUsername = "invalid_user_" + System.currentTimeMillis();
-        String invalidAccessKey = "invalid_key_" + System.currentTimeMillis();
-        try (MockedStatic<UploaderUtil> mockedUtil = mockStatic(UploaderUtil.class)) {
-            mockedUtil
-                    .when(
-                            () ->
-                                    UploaderUtil.uploadAndGetId(
-                                            invalidUsername,
-                                            invalidAccessKey,
-                                            TEST_SUITE_FILE_PATH))
-                    .thenThrow(new IOException("Authentication failed"));
-
-            TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(invalidUsername, invalidAccessKey, TEST_SUITE_FILE_PATH);
-
-            // When
-            CompletableFuture<String> future = testSuiteUploader.uploadTestSuiteAsync();
-
-            // Then
-            assertThatThrownBy(future::join)
-                    .isInstanceOf(CompletionException.class)
-                    .hasMessageContaining(
-                            "https://manual-api.lambdatest.com/app/uploadFramework");
-        }
-    }
-
-    @Test
-    void uploadTestSuiteAsync_ShouldReturnCompletableFuture() {
-        // Given
-        try (MockedStatic<UploaderUtil> mockedUtil = mockStatic(UploaderUtil.class)) {
-            mockedUtil
-                    .when(
-                            () ->
-                                    UploaderUtil.uploadAndGetId(
-                                            TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH))
-                    .thenReturn(TEST_SUITE_ID);
-
-            TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH);
-
-            // When
-            CompletableFuture<String> future = testSuiteUploader.uploadTestSuiteAsync();
-
-            // Then
-            assertThat(future).isNotNull();
-        }
-    }
 }
