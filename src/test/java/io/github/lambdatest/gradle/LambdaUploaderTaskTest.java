@@ -51,8 +51,7 @@ class LambdaUploaderTaskTest {
 
         // When/Then - Should coordinate uploads but fail at HTTP execution (expected in
         // tests)
-        assertThatThrownBy(() -> task.uploadApkToLambdaTest())
-                .isInstanceOf(RuntimeException.class);
+        assertThatThrownBy(() -> task.uploadApkToLambdaTest()).isInstanceOf(RuntimeException.class);
     }
 
     @Test

@@ -41,7 +41,8 @@ class LambdaTestPluginTest {
 
         // When
         LambdaTestTask runTask = (LambdaTestTask) project.getTasks().findByName("runLambdaTest");
-        LambdaUploaderTask uploadTask = (LambdaUploaderTask) project.getTasks().findByName("uploadApkToLambdaTest");
+        LambdaUploaderTask uploadTask =
+                (LambdaUploaderTask) project.getTasks().findByName("uploadApkToLambdaTest");
 
         runTask.setUsername("testUser");
         uploadTask.setAccessKey("testKey");

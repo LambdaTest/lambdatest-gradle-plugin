@@ -15,12 +15,14 @@ class UploaderUtilTest {
     @Test
     void constructor_ShouldNotBeInstantiable() {
         // When/Then - Utility class should not be instantiable
-        assertThatThrownBy(() -> {
-            // Use reflection to try to create instance
-            var constructor = UploaderUtil.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            constructor.newInstance();
-        }).hasCauseInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(
+                        () -> {
+                            // Use reflection to try to create instance
+                            var constructor = UploaderUtil.class.getDeclaredConstructor();
+                            constructor.setAccessible(true);
+                            constructor.newInstance();
+                        })
+                .hasCauseInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test
@@ -30,7 +32,10 @@ class UploaderUtilTest {
         String invalidAccessKey = "invalid_key";
 
         // When/Then - Should throw IOException for invalid credentials
-        assertThatThrownBy(() -> UploaderUtil.uploadAndGetId(invalidUsername, invalidAccessKey, TEST_APP_FILE_PATH))
+        assertThatThrownBy(
+                        () ->
+                                UploaderUtil.uploadAndGetId(
+                                        invalidUsername, invalidAccessKey, TEST_APP_FILE_PATH))
                 .isInstanceOf(IOException.class);
     }
 
@@ -40,7 +45,11 @@ class UploaderUtilTest {
         String invalidFilePath = "/non/existent/file.apk";
 
         // When/Then - Should handle file not found gracefully
-        assertThatThrownBy(() -> UploaderUtil.uploadAndGetId(TEST_USERNAME, TEST_ACCESS_KEY, invalidFilePath))
-                .isInstanceOf(Exception.class); // Could be IOException or other file-related exception
+        assertThatThrownBy(
+                        () ->
+                                UploaderUtil.uploadAndGetId(
+                                        TEST_USERNAME, TEST_ACCESS_KEY, invalidFilePath))
+                .isInstanceOf(
+                        Exception.class); // Could be IOException or other file-related exception
     }
 }

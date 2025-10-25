@@ -65,16 +65,21 @@ class LambdaTestTaskTest {
 
         try (MockedStatic<UploaderUtil> mockedUtil = mockStatic(UploaderUtil.class)) {
             mockedUtil
-                    .when(() -> UploaderUtil.uploadAndGetId(TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_FILE_PATH))
+                    .when(
+                            () ->
+                                    UploaderUtil.uploadAndGetId(
+                                            TEST_USERNAME, TEST_ACCESS_KEY, TEST_APP_FILE_PATH))
                     .thenReturn(TEST_APP_ID);
             mockedUtil
-                    .when(() -> UploaderUtil.uploadAndGetId(TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH))
+                    .when(
+                            () ->
+                                    UploaderUtil.uploadAndGetId(
+                                            TEST_USERNAME, TEST_ACCESS_KEY, TEST_SUITE_FILE_PATH))
                     .thenReturn(TEST_SUITE_ID);
 
             // When/Then - Should coordinate uploads but fail at HTTP execution (expected in
             // tests)
-            assertThatThrownBy(() -> task.runLambdaTest())
-                    .isInstanceOf(RuntimeException.class);
+            assertThatThrownBy(() -> task.runLambdaTest()).isInstanceOf(RuntimeException.class);
         }
     }
 
