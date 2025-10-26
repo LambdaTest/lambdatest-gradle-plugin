@@ -40,6 +40,50 @@ public final class UploaderUtil {
      */
     public static String uploadAndGetId(String username, String accessKey, String filePath)
             throws IOException {
+        return uploadAndGetId(username, accessKey, filePath, false, null);
+    }
+
+    /**
+     * Uploads a file to LambdaTest and returns its ID with optional progress tracking.
+     *
+     * @implNote This method sends the file to {@link Constants#API_URL} and handles the multipart
+     *     form data construction and response parsing. When showProgress is true, it uses {@link
+     *     ProgressRequestBody} to track and display upload progress.
+     * @param username The LambdaTest account username
+     * @param accessKey The LambdaTest account access key
+     * @param filePath The path to the file to be uploaded
+     * @param showProgress Whether to display upload progress in the console
+     * @return The ID of the uploaded file
+     * @throws IOException if there's an error during file upload or response parsing
+     */
+    public static String uploadAndGetId(
+            String username, String accessKey, String filePath, boolean showProgress)
+            throws IOException {
+        return uploadAndGetId(username, accessKey, filePath, showProgress, null);
+    }
+
+    /**
+     * Uploads a file to LambdaTest and returns its ID with optional progress tracking and custom
+     * prefix.
+     *
+     * @implNote This method sends the file to {@link Constants#API_URL} and handles the multipart
+     *     form data construction and response parsing. When showProgress is true, it uses {@link
+     *     ProgressRequestBody} to track and display upload progress.
+     * @param username The LambdaTest account username
+     * @param accessKey The LambdaTest account access key
+     * @param filePath The path to the file to be uploaded
+     * @param showProgress Whether to display upload progress in the console
+     * @param progressPrefix Optional prefix for progress display (e.g., "App", "Test Suite")
+     * @return The ID of the uploaded file
+     * @throws IOException if there's an error during file upload or response parsing
+     */
+    public static String uploadAndGetId(
+            String username,
+            String accessKey,
+            String filePath,
+            boolean showProgress,
+            String progressPrefix)
+            throws IOException {
         OkHttpClient client =
                 new OkHttpClient.Builder()
                         .connectTimeout(1, TimeUnit.MINUTES) // Increase connection timeout
@@ -47,16 +91,24 @@ public final class UploaderUtil {
                         .writeTimeout(0, TimeUnit.MILLISECONDS) // Increase write timeout
                         .build();
 
+        File file = new File(filePath);
         MediaType mediaType = MediaType.parse("application/octet-stream");
+        RequestBody fileRequestBody = RequestBody.create(file, mediaType);
+
         RequestBody body =
                 new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart(
-                                "appFile",
-                                filePath,
-                                RequestBody.create(new File(filePath), mediaType))
+                        .addFormDataPart("appFile", filePath, fileRequestBody)
                         .addFormDataPart("type", "espresso-android")
                         .build();
+
+        // Wrap the entire multipart body with progress tracking if requested
+        if (showProgress) {
+            String uploadId = progressPrefix != null ? progressPrefix : "Upload";
+            ProgressRequestBody.ProgressCallback callback =
+                    ProgressRequestBody.createConsoleCallback(uploadId);
+            body = new ProgressRequestBody(body, callback);
+        }
         Request request =
                 new Request.Builder()
                         .url(Constants.API_URL)
