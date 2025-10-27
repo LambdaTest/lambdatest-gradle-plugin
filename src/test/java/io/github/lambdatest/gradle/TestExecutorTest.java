@@ -2,127 +2,105 @@ package io.github.lambdatest.gradle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Unit tests for {@link TestExecutor} class. */
-@ExtendWith(MockitoExtension.class)
 class TestExecutorTest {
 
     private static final String TEST_USERNAME = "testuser";
     private static final String TEST_ACCESS_KEY = "test_access_key";
     private static final String TEST_APP_ID = "lt://APP1234567890";
-    private static final String TEST_SUITE_ID = "lt://APP1234567891";
-    private static final List<String> TEST_DEVICES = Arrays.asList("Pixel 6-12", "Galaxy S21-11");
+    private static final String TEST_TEST_SUITE_ID = "lt://TESTSUITE1234567890";
 
     @Test
-    void constructor_ShouldCreateInstance_WithValidParameters() {
-        // Test standard Android app
-        TestExecutor executor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        false);
-        assertThat(executor).isNotNull();
+    void constructor_AndroidProject_ShouldCreateInstance() {
+        List<String> devices = new ArrayList<>();
+        devices.add("iPhone 12-14");
 
-        // Test Flutter app
-        TestExecutor flutterExecutor =
+        // Valid construction - Android project
+        TestExecutor validExecutor =
                 new TestExecutor(
                         TEST_USERNAME,
                         TEST_ACCESS_KEY,
                         TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
+                        TEST_TEST_SUITE_ID,
+                        devices,
+                        false);
+        assertThat(validExecutor).isNotNull();
+
+        // Test with null parameters (should be handled gracefully)
+        TestExecutor executorWithNulls = new TestExecutor(null, null, null, null, null, false);
+        assertThat(executorWithNulls).isNotNull();
+    }
+
+    @Test
+    void constructor_FlutterProject_ShouldCreateInstance() {
+        List<String> devices = new ArrayList<>();
+        devices.add("iPhone 12-14");
+
+        // Valid construction - Flutter project
+        TestExecutor validExecutor =
+                new TestExecutor(
+                        TEST_USERNAME,
+                        TEST_ACCESS_KEY,
+                        TEST_APP_ID,
+                        TEST_TEST_SUITE_ID,
+                        devices,
                         true);
-        assertThat(flutterExecutor).isNotNull();
+        assertThat(validExecutor).isNotNull();
 
-        // Test null Flutter parameter (should default to false)
-        TestExecutor nullFlutterExecutor =
+        // Null devices list should be handled
+        TestExecutor executorWithNullDevices =
                 new TestExecutor(
                         TEST_USERNAME,
                         TEST_ACCESS_KEY,
                         TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        null);
-        assertThat(nullFlutterExecutor).isNotNull();
+                        TEST_TEST_SUITE_ID,
+                        null,
+                        true);
+        assertThat(executorWithNullDevices).isNotNull();
     }
 
     @Test
-    void executeTests_ShouldHandleParametersCorrectly() {
+    void constructor_ShouldHandleBasicConfiguration() {
         // Given
+        List<String> devices = new ArrayList<>();
+        devices.add("iPhone 12-14");
+
         TestExecutor executor =
                 new TestExecutor(
                         TEST_USERNAME,
                         TEST_ACCESS_KEY,
                         TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
+                        TEST_TEST_SUITE_ID,
+                        devices,
                         false);
 
-        Map<String, String> params = new HashMap<>();
-        params.put("build", "Test Build");
-        params.put("video", "true");
-        params.put("deviceLog", "true");
-
-        // When/Then - Should not throw during parameter setup
-        // Note: Actual HTTP execution will fail in tests, which is expected
-        assertThat(params).containsEntry("build", "Test Build");
-        assertThat(params).containsEntry("video", "true");
+        // When/Then - Just verify the constructor works correctly
         assertThat(executor).isNotNull();
+        // We don't call executeTests() here to avoid making real network calls
     }
 
     @Test
-    void executeTests_ShouldHandleEmptyParameters() {
+    void constructor_WithDeviceList_ShouldHandleFlutterConfiguration() {
         // Given
+        List<String> devices = new ArrayList<>();
+        devices.add("iPhone 12-14");
+        devices.add("Samsung Galaxy S21-11");
+
         TestExecutor executor =
                 new TestExecutor(
                         TEST_USERNAME,
                         TEST_ACCESS_KEY,
                         TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        TEST_DEVICES,
-                        false);
+                        TEST_TEST_SUITE_ID,
+                        devices,
+                        true);
 
-        Map<String, String> emptyParams = new HashMap<>();
-
-        // When/Then - Should handle empty parameters without issues
-        assertThat(emptyParams).isEmpty();
+        // When/Then - Verify construction with device list
         assertThat(executor).isNotNull();
-    }
-
-    @Test
-    void constructor_ShouldHandleDeviceVariations() {
-        // Single device
-        List<String> singleDevice = Arrays.asList("Pixel 6-12");
-        TestExecutor singleDeviceExecutor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        singleDevice,
-                        false);
-        assertThat(singleDeviceExecutor).isNotNull();
-
-        // Multiple devices
-        List<String> multipleDevices = Arrays.asList("Pixel 6-12", "Galaxy S21-11", "iPhone 13-15");
-        TestExecutor multiDeviceExecutor =
-                new TestExecutor(
-                        TEST_USERNAME,
-                        TEST_ACCESS_KEY,
-                        TEST_APP_ID,
-                        TEST_SUITE_ID,
-                        multipleDevices,
-                        false);
-        assertThat(multiDeviceExecutor).isNotNull();
+        // We don't call executeTests() here to avoid making real network calls
     }
 }
