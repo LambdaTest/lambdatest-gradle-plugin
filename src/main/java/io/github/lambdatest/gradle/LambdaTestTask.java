@@ -91,28 +91,23 @@ public class LambdaTestTask extends DefaultTask {
         try {
             if (appIdFuture != null) {
                 appId = appIdFuture.join();
-                if (!progressEnabled) {
-                    logger.info("App uploaded successfully with ID: {}", appId);
-                }
             }
 
             if (testSuiteIdFuture != null) {
                 testSuiteId = testSuiteIdFuture.join();
-                if (!progressEnabled) {
-                    logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
-                }
             }
 
-            // Clear progress display if enabled
+            // Clear progress display if enabled, then show success messages
             if (progressEnabled) {
                 ProgressTracker.cleanup();
-                // Show success messages after progress cleanup
-                if (appIdFuture != null) {
-                    logger.info("App uploaded successfully with ID: {}", appId);
-                }
-                if (testSuiteIdFuture != null) {
-                    logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
-                }
+            }
+
+            // Show success messages (unified flow for both progress and non-progress cases)
+            if (appIdFuture != null) {
+                logger.info("App uploaded successfully with ID: {}", appId);
+            }
+            if (testSuiteIdFuture != null) {
+                logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
             }
         } catch (CompletionException e) {
             // Cleanup progress display on error
