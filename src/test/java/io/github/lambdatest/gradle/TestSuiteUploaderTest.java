@@ -56,33 +56,4 @@ class TestSuiteUploaderTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Test suite file must have a .apk extension");
     }
-
-    @Test
-    void uploadTestSuiteAsync_ShouldReturnCompletableFuture() {
-        // Given
-        TestSuiteUploader uploader =
-                new TestSuiteUploader(TEST_USERNAME, TEST_ACCESS_KEY, validApkPath);
-
-        // When/Then - Verify the uploader is created correctly
-        // We don't call uploadTestSuiteAsync() to avoid background thread execution
-        assertThat(uploader).isNotNull();
-
-        // In a real unit test, we would mock the UploaderUtil to test the async
-        // behavior
-        // without making actual network calls
-    }
-
-    @Test
-    void uploadTestSuiteAsync_ShouldHandleInvalidCredentials() {
-        // Given - Test that invalid credentials are handled during construction
-        TestSuiteUploader uploader =
-                new TestSuiteUploader("invalid_user", "invalid_key", validApkPath);
-
-        // When/Then - The uploader should be created successfully
-        assertThat(uploader).isNotNull();
-
-        // The actual upload failure would occur when uploadTestSuiteAsync() is called
-        // and executed
-        // but we avoid calling it in unit tests to prevent network calls
-    }
 }

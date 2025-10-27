@@ -54,31 +54,4 @@ class AppUploaderTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("App file must have a .apk extension");
     }
-
-    @Test
-    void uploadAppAsync_ShouldReturnCompletableFuture() {
-        // Given
-        AppUploader appUploader = new AppUploader(TEST_USERNAME, TEST_ACCESS_KEY, validApkPath);
-
-        // When/Then - Verify the uploader is created correctly
-        // We don't call uploadAppAsync() to avoid background thread execution
-        assertThat(appUploader).isNotNull();
-
-        // In a real unit test, we would mock the UploaderUtil to test the async
-        // behavior
-        // without making actual network calls
-    }
-
-    @Test
-    void uploadAppAsync_ShouldHandleInvalidCredentials() {
-        // Given - Test that invalid credentials are handled during construction
-        AppUploader appUploader = new AppUploader("invalid_user", "invalid_key", validApkPath);
-
-        // When/Then - The uploader should be created successfully
-        assertThat(appUploader).isNotNull();
-
-        // The actual upload failure would occur when uploadAppAsync() is called and
-        // executed
-        // but we avoid calling it in unit tests to prevent network calls
-    }
 }
