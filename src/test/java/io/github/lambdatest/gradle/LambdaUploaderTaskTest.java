@@ -32,11 +32,15 @@ class LambdaUploaderTaskTest {
 
         // Create dummy APK files for testing
         File dummyApp = new File(tempDir, "test-app.apk");
-        dummyApp.createNewFile();
+        if (!dummyApp.createNewFile()) {
+            throw new IOException("Failed to create test app APK file");
+        }
         validAppPath = dummyApp.getAbsolutePath();
 
         File dummyTest = new File(tempDir, "test-suite.apk");
-        dummyTest.createNewFile();
+        if (!dummyTest.createNewFile()) {
+            throw new IOException("Failed to create test suite APK file");
+        }
         validTestPath = dummyTest.getAbsolutePath();
     }
 
