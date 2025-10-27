@@ -59,34 +59,25 @@ public class LambdaUploaderTask extends DefaultTask {
         try {
             if (appIdFuture != null) {
                 appId = appIdFuture.join();
-                if (!progressEnabled) {
-                    logger.lifecycle(
-                            "\u001B[32mApp uploaded successfully with ID: {}\u001B[0m", appId);
-                }
             }
 
             if (testSuiteIdFuture != null) {
                 testSuiteId = testSuiteIdFuture.join();
-                if (!progressEnabled) {
-                    logger.lifecycle(
-                            "\u001B[32mTest suite uploaded successfully with ID: {}\u001B[0m",
-                            testSuiteId);
-                }
             }
 
-            // Clear progress display if enabled
+            // Clear progress display if enabled, then show success messages
             if (progressEnabled) {
                 ProgressTracker.cleanup();
-                // Show success messages after progress cleanup
-                if (appIdFuture != null) {
-                    logger.lifecycle(
-                            "\u001B[32mApp uploaded successfully with ID: {}\u001B[0m", appId);
-                }
-                if (testSuiteIdFuture != null) {
-                    logger.lifecycle(
-                            "\u001B[32mTest suite uploaded successfully with ID: {}\u001B[0m",
-                            testSuiteId);
-                }
+            }
+
+            // Show success messages (unified flow for both progress and non-progress cases)
+            if (appIdFuture != null) {
+                logger.lifecycle("\u001B[32mApp uploaded successfully with ID: {}\u001B[0m", appId);
+            }
+            if (testSuiteIdFuture != null) {
+                logger.lifecycle(
+                        "\u001B[32mTest suite uploaded successfully with ID: {}\u001B[0m",
+                        testSuiteId);
             }
         } catch (CompletionException e) {
             // Cleanup progress display on error
