@@ -45,6 +45,7 @@ public class LambdaTestTask extends DefaultTask {
     private String appId;
     private String testSuiteId;
     private Integer queueTimeout;
+    private Boolean showUploadProgress;
 
     /**
      * Executes the LambdaTest task, which includes uploading the application and test suite,
@@ -58,22 +59,31 @@ public class LambdaTestTask extends DefaultTask {
      */
     @TaskAction
     public void runLambdaTest() {
-        logger.info("Starting LambdaTest task...");
+        boolean progressEnabled = showUploadProgress != null && showUploadProgress;
+
+        if (!progressEnabled) {
+            logger.info("Starting LambdaTest task...");
+        }
 
         // Upload app
         CompletableFuture<String> appIdFuture = null;
         CompletableFuture<String> testSuiteIdFuture = null;
 
         if (appId == null && appFilePath != null) {
-            logger.info("Uploading app...");
-            AppUploader appUploader = new AppUploader(username, accessKey, appFilePath);
+            if (!progressEnabled) {
+                logger.info("Uploading app...");
+            }
+            AppUploader appUploader =
+                    new AppUploader(username, accessKey, appFilePath, progressEnabled);
             appIdFuture = appUploader.uploadAppAsync();
         }
 
         if (testSuiteId == null && testSuiteFilePath != null) {
-            logger.info("Uploading test suite...");
+            if (!progressEnabled) {
+                logger.info("Uploading test suite...");
+            }
             TestSuiteUploader testSuiteUploader =
-                    new TestSuiteUploader(username, accessKey, testSuiteFilePath);
+                    new TestSuiteUploader(username, accessKey, testSuiteFilePath, progressEnabled);
             testSuiteIdFuture = testSuiteUploader.uploadTestSuiteAsync();
         }
 
@@ -81,14 +91,29 @@ public class LambdaTestTask extends DefaultTask {
         try {
             if (appIdFuture != null) {
                 appId = appIdFuture.join();
-                logger.info("App uploaded successfully with ID: {}", appId);
             }
 
             if (testSuiteIdFuture != null) {
                 testSuiteId = testSuiteIdFuture.join();
+            }
+
+            // Clear progress display if enabled, then show success messages
+            if (progressEnabled) {
+                ProgressTracker.cleanup();
+            }
+
+            // Show success messages (unified flow for both progress and non-progress cases)
+            if (appIdFuture != null) {
+                logger.info("App uploaded successfully with ID: {}", appId);
+            }
+            if (testSuiteIdFuture != null) {
                 logger.info("Test suite uploaded successfully with ID: {}", testSuiteId);
             }
         } catch (CompletionException e) {
+            // Cleanup progress display on error
+            if (progressEnabled) {
+                ProgressTracker.cleanup();
+            }
             logger.error("Failed to execute tasks: {}", e);
             throw new RuntimeException(e);
         }
@@ -216,5 +241,9 @@ public class LambdaTestTask extends DefaultTask {
         if (testSuiteId != null && !testSuiteId.trim().isEmpty()) {
             this.testSuiteId = testSuiteId;
         }
+    }
+
+    public void setShowUploadProgress(Boolean showUploadProgress) {
+        this.showUploadProgress = showUploadProgress;
     }
 }
