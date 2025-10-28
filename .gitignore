@@ -2,7 +2,6 @@
 /build/
 /target/
 
-.env
 
 *.css
 *.gif
