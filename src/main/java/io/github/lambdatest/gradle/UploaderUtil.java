@@ -111,7 +111,7 @@ public final class UploaderUtil {
         }
         Request request =
                 new Request.Builder()
-                        .url(Constants.API_URL)
+                        .url(Constants.getApiUrl())
                         .addHeader("Authorization", Credentials.basic(username, accessKey))
                         .post(body)
                         .build();

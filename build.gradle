@@ -17,11 +17,9 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-api:2.24.1'
     implementation 'org.apache.logging.log4j:log4j-core:2.24.1'
     
-    // Testing dependencies
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     testImplementation 'org.mockito:mockito-core:5.5.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
-    testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
     testImplementation 'org.assertj:assertj-core:3.24.2'
 }
 
@@ -54,6 +52,10 @@ spotless {
         googleJavaFormat().aosp()
         formatAnnotations()
     }
+}
+
+test {
+    useJUnitPlatform()
 }
 
 javadoc {
