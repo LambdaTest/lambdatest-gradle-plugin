@@ -171,15 +171,15 @@ public class LambdaTestTask extends DefaultTask {
     }
 
     public void setAppFilePath(String appFilePath) {
-        if (appFilePath == null || appFilePath.trim().isEmpty()) {
-            throw new IllegalArgumentException("App file path cannot be null or empty");
+        if (appFilePath != null && appFilePath.trim().isEmpty()) {
+            throw new IllegalArgumentException("App file path cannot be empty");
         }
         this.appFilePath = appFilePath;
     }
 
     public void setTestSuiteFilePath(String testSuiteFilePath) {
-        if (testSuiteFilePath == null || testSuiteFilePath.trim().isEmpty()) {
-            throw new IllegalArgumentException("Test suite file path cannot be null or empty");
+        if (testSuiteFilePath != null && testSuiteFilePath.trim().isEmpty()) {
+            throw new IllegalArgumentException("Test suite file path cannot be empty");
         }
         this.testSuiteFilePath = testSuiteFilePath;
     }
