@@ -4,8 +4,36 @@ plugins {
     id 'com.diffplug.spotless' version '6.25.0'
 }
 
+// Brand switch for the Gradle Plugin Portal.
+// By default the build publishes io.github.lambdatest.gradle exactly as before.
+// Build with -Pbrand=testmuai to publish the same plugin as com.testmuai.gradle.
+// Only the plugin ID, group and listing text change; the code and task names stay the same.
+def brand = (findProperty('brand') ?: 'lambdatest').toString().toLowerCase()
+def brands = [
+    lambdatest: [
+        group      : 'io.github.lambdatest',
+        id         : 'io.github.lambdatest.gradle',
+        website    : 'https://www.lambdatest.com',
+        displayName: 'LambdaTest Gradle Plugin',
+        description: 'Runs Espresso tests on LambdaTest',
+        tags       : ['espresso', 'test', 'lambdatest', 'app', 'automation', 'appautomation'],
+    ],
+    testmuai: [
+        group      : 'com.testmuai',
+        id         : 'com.testmuai.gradle',
+        website    : 'https://www.testmuai.com',
+        displayName: 'TestMu AI Gradle Plugin',
+        description: 'Runs Espresso tests on TestMu AI (formerly LambdaTest)',
+        tags       : ['espresso', 'test', 'testmuai', 'lambdatest', 'app', 'automation', 'appautomation'],
+    ],
+]
+if (!brands.containsKey(brand)) {
+    throw new GradleException("Unknown brand '${brand}'. Use lambdatest (default) or testmuai.")
+}
+def b = brands[brand]
+
 version = '1.0.7'
-group = 'io.github.lambdatest'
+group = b.group
 
 repositories {
     mavenCentral()
@@ -34,15 +62,15 @@ test {
 }
 
 gradlePlugin {
-    website = 'https://www.lambdatest.com'
+    website = b.website
     vcsUrl = 'https://github.com/LambdaTest/lambdatest-gradle-plugin'
     plugins {
         lambdatestPlugin {
-            id = 'io.github.lambdatest.gradle'
+            id = b.id
             implementationClass = 'io.github.lambdatest.gradle.LambdaTestPlugin'
-            displayName = 'LambdaTest Gradle Plugin'
-            description = 'Runs Espresso tests on LambdaTest'
-            tags.set(['espresso', 'test', 'lambdatest', 'app', 'automation', 'appautomation'])
+            displayName = b.displayName
+            description = b.description
+            tags.set(b.tags)
         }
     }
 }
